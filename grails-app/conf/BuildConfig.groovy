@@ -27,6 +27,9 @@ grails.project.dependency.resolution = {
     }
     
     dependencies {
+        test('org.seleniumhq.selenium:selenium-htmlunit-driver:latest.release') {
+                exclude 'xml-apis'
+        }
     }
     
 }
