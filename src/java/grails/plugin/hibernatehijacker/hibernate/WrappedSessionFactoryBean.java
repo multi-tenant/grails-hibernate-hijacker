@@ -1,25 +1,30 @@
 package grails.plugin.hibernatehijacker.hibernate;
 
-import grails.plugin.eventing.EventBroker;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.context.CurrentSessionContext;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.impl.SessionFactoryImpl;
 import org.springframework.orm.hibernate3.SpringSessionContext;
 
+
 /**
+ * The SessionFactory is still built the usual way, but instead of returning the
+ * actual instance we're creating and returning a proxy. 
+ * 
+ * Other features like event listeners can be enabled by injecting 
+ * HibernateConfigurationPostProcessor beans. 
  * 
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
 public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
 
-    private EventBroker eventBroker;
+    private SessionFactoryProxyFactory sessionFactoryProxyFactory;
+    private List<HibernateConfigPostProcessor> hibernateConfigPostProcessors
+        = new ArrayList<HibernateConfigPostProcessor>();
     
     /**
      * If no plugins has specified another CurrentSessionContextClass 
@@ -31,38 +36,24 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
     protected SessionFactory buildSessionFactory() throws Exception {
         setExposeTransactionAwareSessionFactory(false);
         SessionFactory realSessionFactory = super.buildSessionFactory();
-        return createSessionFactoryProxy(realSessionFactory);
+        return sessionFactoryProxyFactory.createSessionFactoryProxy(realSessionFactory, currentSessionContextClass);
     }
 
-    private SessionFactory createSessionFactoryProxy(final SessionFactory realSessionFactory) throws Exception {
-        SessionFactoryInvocationHandler handler = new SessionFactoryInvocationHandler(realSessionFactory, eventBroker);
-        SessionFactoryImplementor sessionFactoryProxy = createSessionFactoryProxy(handler);
-        CurrentSessionContext defaultContext = createCurrentSessionContextInstance(sessionFactoryProxy);
-        handler.setDefaultCurrentSessionContext(defaultContext);
-        return sessionFactoryProxy;
-    }
-   
-    private SessionFactoryImplementor createSessionFactoryProxy(InvocationHandler handler) {
-        Class<?>[] interfaces = SessionFactoryImpl.class.getInterfaces();
-        ClassLoader classloader = SessionFactory.class.getClassLoader();
-        return (SessionFactoryImplementor) Proxy.newProxyInstance(classloader, interfaces, handler);
-    }
-    
-    /**
-     * Usually we Hibernate is responsible for making an instance of CurrentSessionContext, but that would
-     * cause the implementation to contain a reference to the actual SessionFactory and not the proxy.
-     * By creating this instance ourself we can make sure to it a reference to the proxy instead.
-     */
-    private CurrentSessionContext createCurrentSessionContextInstance(SessionFactoryImplementor sessionFactoryProxy) throws Exception {
-        Constructor<? extends CurrentSessionContext> constructor = 
-            currentSessionContextClass.getConstructor(SessionFactoryImplementor.class);
+    @Override
+    protected void postProcessConfiguration(final Configuration config) throws HibernateException {
         
-        return constructor.newInstance(sessionFactoryProxy);
+        for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors)
+            processor.doPostProcessing(config);
+        
+        super.postProcessConfiguration(config);
     }
  
     /**
      * Make sure not to pass the argument to ConfigurableLocalSessionFactoryBean.
      * We don't want Hibernate to make an instance of the CurrentSessionContext. 
+     * 
+     * By listening in on this we're able to support plugins like webflow without
+     * introducing a compile time dependency. 
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -70,8 +61,12 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
         this.currentSessionContextClass = (Class<? extends CurrentSessionContext>) currentSessionContextClass;
     }
     
-    public void setEventBroker(EventBroker eventBroker) {
-        this.eventBroker = eventBroker;
+    public void setSessionFactoryProxyFactory(SessionFactoryProxyFactory sessionFactoryProxyFactory) {
+        this.sessionFactoryProxyFactory = sessionFactoryProxyFactory;
+    }
+    
+    public void setHibernateConfigPostProcessors(List<HibernateConfigPostProcessor> configPostProcessors) {
+        this.hibernateConfigPostProcessors = configPostProcessors;
     }
     
 }

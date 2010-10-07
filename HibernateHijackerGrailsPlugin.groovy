@@ -1,4 +1,7 @@
 import grails.plugin.hibernatehijacker.spring.*;
+import grails.plugin.hibernatehijacker.hibernate.*;
+import grails.plugin.hibernatehijacker.hibernate.events.*;
+
 
 class HibernateHijackerGrailsPlugin {
     
@@ -32,6 +35,14 @@ This plugin publishes intercepted Session instances to a lightweight event broke
 '''
 
     def doWithSpring = {
+        sessionFactoryProxyFactory(SessionFactoryProxyFactory) {
+            eventBroker = ref("eventBroker")
+        }
+        
+        eventListenerConfigurator(EventListenerConfigurator) {
+            eventBroker = ref("eventBroker")    
+        }
+        
         sessionFactoryPostProcessor(SessionFactoryPostProcessor)
     }
     
