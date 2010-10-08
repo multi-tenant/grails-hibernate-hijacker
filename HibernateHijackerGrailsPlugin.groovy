@@ -39,8 +39,12 @@ This plugin publishes intercepted Session instances to a lightweight event broke
             eventBroker = ref("eventBroker")
         }
         
+        hibernateEventListener(HibernateEventListener){
+            eventBroker = ref("eventBroker")
+        }
+        
         eventListenerConfigurator(EventListenerConfigurator) {
-            eventBroker = ref("eventBroker")    
+            hibernateEventListener = ref("hibernateEventListener")
         }
         
         sessionFactoryPostProcessor(SessionFactoryPostProcessor)

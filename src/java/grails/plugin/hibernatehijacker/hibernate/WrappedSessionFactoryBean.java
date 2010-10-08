@@ -41,7 +41,6 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
 
     @Override
     protected void postProcessConfiguration(final Configuration config) throws HibernateException {
-        
         for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors)
             processor.doPostProcessing(config);
         

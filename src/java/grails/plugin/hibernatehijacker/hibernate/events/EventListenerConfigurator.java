@@ -1,6 +1,5 @@
 package grails.plugin.hibernatehijacker.hibernate.events;
 
-import grails.plugin.eventing.EventBroker;
 import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor;
 
 import org.hibernate.HibernateException;
@@ -8,7 +7,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.event.EventListeners;
 
 /**
- * 
+ * Responsible for adding Hibernate event listeners. 
  * @author Kim A. Betti
  */
 public class EventListenerConfigurator implements HibernateConfigPostProcessor {
@@ -17,22 +16,22 @@ public class EventListenerConfigurator implements HibernateConfigPostProcessor {
         + "load,initializeCollection,lock,merge,persist,postDelete,postInsert,postLoad,postUpdate,"
         + "preDelete,preInsert,preLoad,preUpdate,refresh,replicate,saveOrUpdate";
     
-    private EventBroker eventBroker;
+    private HibernateEventListener hibernateEventListener;
 
     @Override
     public void doPostProcessing(final Configuration configuration) throws HibernateException {
-        EventListener listener = new EventListener(eventBroker);
         EventListeners eventListeners = configuration.getEventListeners();
-        addListenersByName(eventListeners, listener);
+        registerEventlisteners(eventListeners);
     }
     
-    private void addListenersByName(EventListeners eventListeners, EventListener listener) {
+    private void registerEventlisteners(EventListeners eventListeners) {
+        assert hibernateEventListener != null;
         for (String eventName : EVENT_NAMES.split("\\,")) 
-            HibernateEventUtil.addListener(eventListeners, eventName, listener);
+            HibernateEventUtil.addListener(eventListeners, eventName, hibernateEventListener);
     }
- 
-    public void setEventBroker(EventBroker eventBroker) {
-        this.eventBroker = eventBroker;
+   
+    public void setHibernateEventListener(HibernateEventListener hibernateEventListener) {
+        this.hibernateEventListener = hibernateEventListener;
     }
     
 }

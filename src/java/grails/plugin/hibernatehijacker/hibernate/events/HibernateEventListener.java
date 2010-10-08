@@ -9,8 +9,16 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.event.*;
 
+/**
+ * Brute force approach. 
+ * 
+ * This could probably be implemented in a more dynamic 
+ * fashion using Groovy, but with more overhead. 
+ * 
+ * @author Kim A. Betti
+ */
 @SuppressWarnings("serial")
-public class EventListener implements AutoFlushEventListener, DeleteEventListener, DirtyCheckEventListener, 
+public class HibernateEventListener implements AutoFlushEventListener, DeleteEventListener, DirtyCheckEventListener, 
         EvictEventListener, FlushEventListener, FlushEntityEventListener, LoadEventListener,
         InitializeCollectionEventListener, LockEventListener, MergeEventListener, PersistEventListener, 
         PostDeleteEventListener, PostInsertEventListener, PostLoadEventListener, PostUpdateEventListener, 
@@ -20,7 +28,7 @@ public class EventListener implements AutoFlushEventListener, DeleteEventListene
     
     private EventBroker eventBroker;
         
-    public EventListener(EventBroker eventBroker) {
+    public void setEventBroker(EventBroker eventBroker) {
         this.eventBroker = eventBroker;
     }
 
@@ -35,6 +43,7 @@ public class EventListener implements AutoFlushEventListener, DeleteEventListene
     }
     
     @Override
+    @SuppressWarnings("rawtypes")
     public void onRefresh(RefreshEvent event, Map arg1) throws HibernateException {
         onRefresh(event);
     }
@@ -88,6 +97,7 @@ public class EventListener implements AutoFlushEventListener, DeleteEventListene
     }
     
     @Override
+    @SuppressWarnings("rawtypes")
     public void onPersist(PersistEvent event, Map arg1) throws HibernateException {
         onPersist(event);
     }
@@ -98,6 +108,7 @@ public class EventListener implements AutoFlushEventListener, DeleteEventListene
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public void onMerge(MergeEvent event, Map arg1) throws HibernateException {
         onMerge(event);
     }
@@ -143,6 +154,7 @@ public class EventListener implements AutoFlushEventListener, DeleteEventListene
     }
     
     @Override
+    @SuppressWarnings("rawtypes")
     public void onDelete(DeleteEvent event, Set arg1) throws HibernateException {
         onDelete(event);
     }
@@ -163,15 +175,13 @@ public class EventListener implements AutoFlushEventListener, DeleteEventListene
     
     private void publishEvent(String eventName, AbstractEvent event, Object entity) {
         StringBuilder fullEventName = new StringBuilder(100);
-        fullEventName.append("hibernate.")
-            .append(eventName);
+        fullEventName.append("hibernate.").append(eventName);
         
         if (entity != null) {
             final String entityName = GrailsNameUtils.getPropertyName(entity.getClass());
             fullEventName.append(".").append(entityName);
         }
             
-        System.out.println("Publishing event: "+ fullEventName.toString());
         eventBroker.publish(fullEventName.toString(), event);
     }
     
