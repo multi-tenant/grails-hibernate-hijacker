@@ -1,20 +1,21 @@
 package grails.plugin.hibernatehijacker.spring;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 
-import org.springframework.beans.*;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.*;
-import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 
 import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor;
 import grails.plugin.hibernatehijacker.hibernate.WrappedSessionFactoryBean;
 
 /**
- * Replaces the default ConfigurableLocalSessionFactoryBean with our
- * WrappedSessionFactoryBean (which extends the default one). 
+ * Replaces the default ConfigurableLocalSessionFactoryBean with WrappedSessionFactoryBean. 
+ * It will also make sure that our replacement is wired with the required dependencies. 
  * 
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
@@ -39,20 +40,17 @@ public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor {
     }
     
     /**
-     * Looks up all beans implementing HibernateConfigPostProcessor
+     * Looks up all beans implementing HibernateConfigPostProcessor and makes sure that they're
+     * injected into WrappedSessionFactoryBean
+     * 
      * @param beanFactory
      * @param properties
      */
     private void setHibernateConfigPostProcessors(ConfigurableListableBeanFactory beanFactory, MutablePropertyValues properties) {
-        Set<String> configPostProcessorBeanNames 
-            = beanFactory.getBeansOfType(HibernateConfigPostProcessor.class).keySet();
+        Collection<HibernateConfigPostProcessor> configPostProcessors
+            = beanFactory.getBeansOfType(HibernateConfigPostProcessor.class).values();
         
-        List<RuntimeBeanReference> postProcessors = new ManagedList<RuntimeBeanReference>();
-        for (String postProcessorBeanName : configPostProcessorBeanNames) {
-            postProcessors.add(new RuntimeBeanReference(postProcessorBeanName));
-        }
-        
-        PropertyValue property = new PropertyValue("hibernateConfigPostProcessors", postProcessors);
+        PropertyValue property = new PropertyValue("hibernateConfigPostProcessors", configPostProcessors);
         properties.addPropertyValue(property);
     }
     
