@@ -4,11 +4,10 @@ import grails.plugin.eventing.EventBroker;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
 import org.hibernate.context.CurrentSessionContext;
 
 /**
- * 
+ * SessionFactory method invocation will be passing through here. 
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
 public class SessionFactoryInvocationHandler implements InvocationHandler {
@@ -34,7 +33,7 @@ public class SessionFactoryInvocationHandler implements InvocationHandler {
             return defaultCurrentSessionContext.currentSession();
         
         Object returnedInstance = method.invoke(realSessionFactory, args);
-        if (methodName.equals(OPEN_SESSION) && returnedInstance instanceof Session) 
+        if (methodName.equals(OPEN_SESSION)) 
             eventBroker.publish(INTERCEPTED_SESSION_EVENT_NAME, returnedInstance);
         
         return returnedInstance;
