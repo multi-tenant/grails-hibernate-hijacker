@@ -27,6 +27,8 @@ grails.project.dependency.resolution = {
     }
     
     dependencies {
+		test 'apache-httpclient:commons-httpclient:3.1' // Bug in Spock?
+		
         test('org.seleniumhq.selenium:selenium-htmlunit-driver:latest.release') {
                 exclude 'xml-apis'
         }

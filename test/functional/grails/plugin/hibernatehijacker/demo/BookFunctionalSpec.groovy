@@ -8,20 +8,19 @@ import grails.plugin.eventing.*
 import org.hibernate.Session
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 
-class BookSpec extends GebSpec {
+class BookFunctionalSpec extends GebSpec {
     
     String baseUrl = "http://localhost:8080"
-    
+	    
     WebDriver createDriver() {
         new HtmlUnitDriver()
     }
     
-    // Doesn't dependency injection work with Geb?
-    def eventBroker = ApplicationHolder.application.mainContext.getBean("eventBroker")
     
     def "Book can be persisted"() {
         
         given: "A subscription to new Hibernate sessions"
+		def eventBroker = ApplicationHolder.application.mainContext.getBean("eventBroker") // DI not working with geb?
         def sessionConsumer = Mock(EventConsumer)
         eventBroker.subscribe("hibernate.sessionCreated", sessionConsumer)
         

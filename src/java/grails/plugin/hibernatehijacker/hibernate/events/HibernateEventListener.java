@@ -185,5 +185,4 @@ public class HibernateEventListener implements AutoFlushEventListener, DeleteEve
         eventBroker.publish(fullEventName.toString(), event);
     }
     
-    
 }

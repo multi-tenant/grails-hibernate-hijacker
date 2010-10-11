@@ -3,6 +3,8 @@ package grails.plugin.hibernatehijacker.demo
 import spock.lang.*
 import grails.plugin.spock.*
 import grails.plugin.eventing.*
+
+import org.codehaus.groovy.grails.commons.ApplicationHolder;
 import org.hibernate.Session
 import org.hibernate.event.*
 
@@ -12,7 +14,12 @@ import org.hibernate.event.*
  */
 class BookSpec extends IntegrationSpec {
     
-    def eventBroker
+	def eventBroker
+	
+	def setup() {
+		println "eventBroker: " + eventBroker
+		assert eventBroker, "EventBroker not found"
+	}
     
     def "Hibernate sessions are intercepted"() {
         given: "A subscription to new Hibernate sessions"
