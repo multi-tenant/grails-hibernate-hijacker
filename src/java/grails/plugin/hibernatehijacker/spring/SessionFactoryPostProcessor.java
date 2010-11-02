@@ -9,6 +9,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.core.Ordered;
 
 import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor;
 import grails.plugin.hibernatehijacker.hibernate.WrappedSessionFactoryBean;
@@ -19,7 +20,7 @@ import grails.plugin.hibernatehijacker.hibernate.WrappedSessionFactoryBean;
  * 
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
-public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor {
+public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor, Ordered {
     
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
@@ -53,5 +54,10 @@ public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor {
         PropertyValue property = new PropertyValue("hibernateConfigPostProcessors", configPostProcessors);
         properties.addPropertyValue(property);
     }
+
+	@Override
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE;
+	}
     
 }

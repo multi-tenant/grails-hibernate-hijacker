@@ -10,6 +10,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.context.CurrentSessionContext;
 import org.springframework.orm.hibernate3.SpringSessionContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The SessionFactory is still built the usual way, but instead of returning the
@@ -22,6 +24,8 @@ import org.springframework.orm.hibernate3.SpringSessionContext;
  */
 public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
 
+	private static final Log log = LogFactory.getLog(WrappedSessionFactoryBean.class);
+	
     private SessionFactoryProxyFactory sessionFactoryProxyFactory;
     private List<HibernateConfigPostProcessor> hibernateConfigPostProcessors
         = new ArrayList<HibernateConfigPostProcessor>();
@@ -41,10 +45,12 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
 
     @Override
     protected void postProcessConfiguration(final Configuration config) throws HibernateException {
-        for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors)
+    	for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors) {
+    		log.debug("Passing Hibernate configuration to: " + processor.getClass().getSimpleName());
             processor.doPostProcessing(config);
-        
-        super.postProcessConfiguration(config);
+    	}
+    	
+    	super.postProcessConfiguration(config);
     }
  
     /**

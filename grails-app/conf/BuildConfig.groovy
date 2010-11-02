@@ -2,24 +2,25 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-grails.plugin.location."eventing" = "../grails-eventing"
+//grails.plugin.location."eventing" = "../grails-eventing"
 
 grails.project.dependency.resolution = {
 
     // inherit Grails' default dependencies
     inherits("global") {
-        // uncomment to disable ehcache
         // excludes 'ehcache'
     }
     
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
+        
+		mavenLocal()
+        mavenCentral()
+		
         grailsPlugins()
         grailsHome()
         grailsCentral()
 
-        mavenLocal()
-        mavenCentral()
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
@@ -27,11 +28,15 @@ grails.project.dependency.resolution = {
     }
     
     dependencies {
-		test 'apache-httpclient:commons-httpclient:3.1' // Bug in Spock?
+		test 'apache-httpclient:commons-httpclient:3.1' // Required by Geb..?
 		
-        test('org.seleniumhq.selenium:selenium-htmlunit-driver:latest.release') {
+        test('org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a6') {
                 exclude 'xml-apis'
         }
+		
+		plugins {
+			compile "plugins.utilities:hawk-eventing:0.2"
+		}
     }
     
 }
