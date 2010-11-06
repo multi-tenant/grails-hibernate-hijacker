@@ -35,7 +35,7 @@ grails.project.dependency.resolution = {
         }
 		
 		plugins {
-			compile "plugins.utilities:hawk-eventing:0.2"
+			compile "plugins.utilities:hawk-eventing:0.3"
 		}
     }
     

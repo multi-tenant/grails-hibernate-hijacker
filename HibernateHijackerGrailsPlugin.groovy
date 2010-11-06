@@ -5,11 +5,12 @@ import grails.plugin.hibernatehijacker.hibernate.events.*;
 class HibernateHijackerGrailsPlugin {
 
     def groupId = "plugins.multitenant"    
-    def version = "0.2.3"
+    def version = "0.2.4"
 
     def grailsVersion = "1.3.5 > *"
     def dependsOn = [
-        'hibernate': '1.3.4 > *'
+        'hibernate': '1.3.4 > *',
+		'hawk-eventing': '0.3 > *'
     ]
     
     /* The webflow plugin replaces SpringSessionContext. 

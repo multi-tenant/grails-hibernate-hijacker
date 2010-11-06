@@ -35,28 +35,24 @@ class BookSpec extends IntegrationSpec {
         }
         
         then: "At least three sessions are intercepted"
-        (3.._) * sessionConsumer.consume(_ as Session, _)
+        (3.._) * sessionConsumer.consume(_ as Event)
     }
     
     def "Book listeners works"() {
         given: "Subscriptions to the expected events"
-        def eventConsumer = Mock(EventConsumer)
-        eventBroker.subscribe("hibernate.preInsert.book", eventConsumer)
-        eventBroker.subscribe("hibernate.postInsert.book", eventConsumer)
-        eventBroker.subscribe("hibernate.saveOrUpdate.book", eventConsumer)
-        eventBroker.subscribe("hibernate.flushEntity.book", eventConsumer)
-        eventBroker.subscribe("hibernate.flush", eventConsumer)
+	        def eventConsumer = Mock(EventConsumer)
+	        eventBroker.subscribe("hibernate.preInsert.book", eventConsumer)
+	        eventBroker.subscribe("hibernate.postInsert.book", eventConsumer)
+	        eventBroker.subscribe("hibernate.saveOrUpdate.book", eventConsumer)
+	        eventBroker.subscribe("hibernate.flushEntity.book", eventConsumer)
+	        eventBroker.subscribe("hibernate.flush", eventConsumer)
         
         when: "We insert a new Book"
-        new Book(name: "Groovy in Actoin")
-            .save(flush: true, failOnError: true)
+	        new Book(name: "Groovy in Actoin")
+	            .save(flush: true, failOnError: true)
         
         then: "We've intercepted the events we suspected"
-        1 * eventConsumer.consume(_ as PreInsertEvent, _)
-        1 * eventConsumer.consume(_ as PostInsertEvent, _)
-        1 * eventConsumer.consume(_ as SaveOrUpdateEvent, _)
-        1 * eventConsumer.consume(_ as FlushEntityEvent, _)
-        1 * eventConsumer.consume(_ as FlushEvent, _)
+	        5 * eventConsumer.consume(_ as Event)
     }
     
 }
