@@ -9,8 +9,7 @@ class HibernateHijackerGrailsPlugin {
 
     def grailsVersion = "1.3.5 > *"
     def dependsOn = [
-        'hibernate': '1.3.4 > *',
-		'hawk-eventing': '0.3 > *'
+        'hibernate': '1.3.4 > *'
     ]
     
     /* The webflow plugin replaces SpringSessionContext. 
