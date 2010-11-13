@@ -7,7 +7,7 @@ Dependencies
 ------------
 
  * The Hibernate plugin (dah..)
- * [Grails Eventing](http://github.com/multi-tenant/grails-eventing)
+ * [Hawk Eventing](http://github.com/multi-tenant/grails-hawk-eventing)
 
 How does it work?
 -----------------
@@ -47,8 +47,8 @@ One way is to add an doWithEvents closure to the plugin description file (...Gra
 
 	def doWithEvents = { ApplicationContext ctx ->
 	
-		hibernate.sessionCreated { org.hibernate.Session session -> 
-			// Do something with the session
+		hibernate.sessionCreated { Event event -> 
+			// Do something with the session (event.payload)
 		}
 		
 	}
