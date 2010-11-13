@@ -38,7 +38,7 @@ class BookFunctionalSpec extends GebSpec {
         Book.findByName("Groovy in Action") != null
         
         and: "We have intercepted at least one session"
-        (1.._) * sessionConsumer.consume(_ as Session, _)
+        (1.._) * sessionConsumer.consume(_ as Event)
     }
     
 }
