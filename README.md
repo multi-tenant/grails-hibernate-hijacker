@@ -53,6 +53,13 @@ One way is to add an doWithEvents closure to the plugin description file (...Gra
 		
 	}
 
+Changelog
+---------
+
+### v0.2.5 - November the 28th. 2010
+
+ * Integrated Hawk Eventing v0.4
+
 Roadmap / todo:
 ---------------
 

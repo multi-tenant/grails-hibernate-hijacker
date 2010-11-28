@@ -1,6 +1,6 @@
 package grails.plugin.hibernatehijacker.hibernate.events;
 
-import grails.plugin.eventing.EventBroker;
+import grails.plugins.hawkeventing.EventBroker;
 import grails.util.GrailsNameUtils;
 
 import java.util.Map;

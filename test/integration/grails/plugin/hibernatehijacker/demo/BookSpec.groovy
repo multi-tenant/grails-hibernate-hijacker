@@ -2,7 +2,7 @@ package grails.plugin.hibernatehijacker.demo
 
 import spock.lang.*
 import grails.plugin.spock.*
-import grails.plugin.eventing.*
+import grails.plugins.hawkeventing.*
 
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
 import org.hibernate.Session

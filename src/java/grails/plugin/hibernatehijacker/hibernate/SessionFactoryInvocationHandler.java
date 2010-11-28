@@ -1,6 +1,6 @@
 package grails.plugin.hibernatehijacker.hibernate;
 
-import grails.plugin.eventing.EventBroker;
+import grails.plugins.hawkeventing.EventBroker;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import org.hibernate.SessionFactory;

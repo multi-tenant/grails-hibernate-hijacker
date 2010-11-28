@@ -2,8 +2,6 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-//grails.plugin.location."eventing" = "../grails-eventing"
-
 grails.project.dependency.resolution = {
 
     // inherit Grails' default dependencies
@@ -29,14 +27,15 @@ grails.project.dependency.resolution = {
     
     dependencies {
 		test 'apache-httpclient:commons-httpclient:3.1' // Required by Geb..?
-		
-        test('org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a6') {
-                exclude 'xml-apis'
+        test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a6', {
+			exclude 'xml-apis'
         }
 		
-		plugins {
-			compile "plugins.utilities:hawk-eventing:0.3"
-		}
+		
     }
     
+	plugins {
+		compile ":hawk-eventing:0.4"
+	}
+	
 }
