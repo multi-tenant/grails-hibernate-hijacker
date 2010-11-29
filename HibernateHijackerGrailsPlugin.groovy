@@ -4,10 +4,12 @@ import grails.plugin.hibernatehijacker.hibernate.events.*;
 
 class HibernateHijackerGrailsPlugin {
   
-    def version = "0.2.5"
+    def version = "0.2.6"
 
     def grailsVersion = "1.3.5 > *"
-    def dependsOn = [:]
+    def dependsOn = [
+		hawkEventing: '0.4.1 > *'
+	]
     
     /* The webflow plugin replaces SpringSessionContext. 
      * By loading our plugin after webflow (if it's installed) we can detect this
@@ -32,6 +34,7 @@ This plugin publishes intercepted Session instances to a lightweight event broke
 '''
 
     def doWithSpring = {
+		
         sessionFactoryProxyFactory(SessionFactoryProxyFactory) {
             eventBroker = ref("eventBroker")
         }
