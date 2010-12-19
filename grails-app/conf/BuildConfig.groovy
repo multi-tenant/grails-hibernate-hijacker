@@ -26,16 +26,9 @@ grails.project.dependency.resolution = {
     }
     
     dependencies {
-		test 'apache-httpclient:commons-httpclient:3.1' // Required by Geb..?
-        test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a6', {
+        test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a7', {
 			exclude 'xml-apis'
         }
-		
-		
     }
     
-	plugins {
-		compile ":hawk-eventing:0.4.1"
-	}
-	
 }

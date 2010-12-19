@@ -4,7 +4,7 @@ import geb.*
 import geb.spock.GebSpec
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import grails.plugin.eventing.*
+import grails.plugins.hawkeventing.*
 import org.hibernate.Session
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 
