@@ -4,17 +4,15 @@ grails.project.test.reports.dir = "target/test-reports"
 
 grails.project.dependency.resolution = {
 
-    // inherit Grails' default dependencies
     inherits("global") {
-        // excludes 'ehcache'
     }
-    
+
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
-        
-		mavenLocal()
+
+        mavenLocal()
         mavenCentral()
-		
+
         grailsPlugins()
         grailsHome()
         grailsCentral()
@@ -24,11 +22,13 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
-    
+
     dependencies {
-        test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a7', {
-			exclude 'xml-apis'
-        }
+        test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a7', { exclude 'xml-apis' }
+    }
+
+    plugins { 
+        compile ":hawk-eventing:0.5"
     }
     
 }
