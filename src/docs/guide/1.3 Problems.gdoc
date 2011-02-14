@@ -1,0 +1,7 @@
+h3. Intercepting new sessions
+
+Hibernate has a rich event API, but for some reason it doesn't expose new sessions. 
+There is a [SessionFactoryObserver|http://docs.jboss.org/hibernate/core/3.5/api/org/hibernate/SessionFactoryObserver.html], but no SessionObserver. 
+This is needed to do things like enabling Hibernate filters. Creating a non-intrusive / violent solution to this turned out to be incredible difficult. 
+
+See this [blog post|http://www.developer-b.com/blog/entry/1635/2010/oct/07/intercepting-hibernate-sessions] for more information on the problems involved. 

@@ -1,0 +1,15 @@
+
+h3. From other plugins
+
+One way is to add an doWithEvents closure to the plugin description file (...GrailsPlugin.groovy). 
+See Hawk Eventing's documentation for other ways of subscribing to events. 
+
+{code:java}
+def doWithEvents = { ApplicationContext ctx ->
+
+    hibernate.sessionCreated { Event event -> 
+        // Do something with the session (event.payload)
+    }
+    
+}
+{code}

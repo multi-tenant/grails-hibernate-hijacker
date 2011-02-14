@@ -1,0 +1,8 @@
+I was a little unsure whether this was within the scope of this plugin or not. 
+Grails 1.3.4 and JIRA 5725 made it a bit easier to add Hibernate event listeners, but this solution is a bit brittle and not very dynamic. 
+If multiple plugins and/or applications declare this Spring bean they'll end up overwriting each other. So in the end I decided to implement this functionality.
+
+It's implementation is very similar to the one found in FalconeUtil, but with a few exceptions. 
+Sessions are not wrapped so there are no events for things like new criteria.
+
+Have a look at the tests for examples.

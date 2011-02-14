@@ -1,0 +1,3 @@
+ * Configuration option for turning of Hibernate event listening?
+ * More tests (a lot of these things are difficult to test)
+ * Find better names for some of the classes / concepts.

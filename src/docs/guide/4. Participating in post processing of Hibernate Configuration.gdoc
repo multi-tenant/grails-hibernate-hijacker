@@ -1,0 +1,17 @@
+This is a very convenient way of doing things like adding Hibernate filters. 
+No need to specify a Hibernate configClass and risk having another plugin replacing it. 
+
+The only thing needed to participate in the post processing of Hibernate's Configuration is to create a Spring bean implementing HibernateConfigPostProcessor. 
+Your bean will be invoked when during construction of the SessionFactory.
+
+{code:java}
+class MyConfigPostProcessor implements HibernateConfigPostProcessor {
+
+    @Override
+    public void doPostProcessing(Configuration configuration) throws HibernateException {
+        // Do something with the configuration instance, like adding a new event listener.
+        // Have a look at EventListenerConfigurator for an example.  
+    }
+
+}
+{code}

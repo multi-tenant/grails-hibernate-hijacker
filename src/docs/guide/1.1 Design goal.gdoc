@@ -1,0 +1,5 @@
+This plugin aims to provide:
+
+* A non-intrusive (as far as humanly possible) way of intercepting new Hibernate sessions. 
+* Hooks to participate in Hibernate configuration during application startup.
+* Non-ceremonial way of listening in on various Hibernate events. 
