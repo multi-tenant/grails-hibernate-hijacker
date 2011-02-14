@@ -1,0 +1,12 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>1.2 Problems</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <h3>Intercepting new sessions</h3><p class="paragraph"/>Hibernate has a rich event API, but for some reason it doesn't expose new sessions. 
+There is a <a href="http://docs.jboss.org/hibernate/core/3.5/api/org/hibernate/SessionFactoryObserver.html" target="blank">SessionFactoryObserver</a>, but no SessionObserver. 
+This is needed to do things like enabling Hibernate filters. Creating a non-intrusive / violent solution to this turned out to be incredible difficult.<p class="paragraph"/>See this <a href="http://www.developer-b.com/blog/entry/1635/2010/oct/07/intercepting-hibernate-sessions" target="blank">blog post</a> for more information on the problems involved. 
+    </body>
+</html>
