@@ -1,1 +1,2 @@
-This plugin was originally created to provide a less intrusive way of intercepting new Hibernate sessions. Parts of this solution turned out to be useful to other plugins as well. 
+This plugin was originally created to provide a less intrusive way of intercepting new Hibernate sessions. 
+Parts of this solution turned out to be useful to other plugins as well. 

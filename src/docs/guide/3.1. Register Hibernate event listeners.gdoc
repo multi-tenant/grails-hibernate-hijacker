@@ -1,0 +1,32 @@
+Adding Hibernate event listeners can be a pain in the a**. 
+Feel free to look at the Hibernate API to get an idea of what you have to go through if you want to do this in a dynamic fashion. 
+
+h3. Convenient option using reflection
+
+A lot of Java programmers don't touch anything using the reflection API (which often is a good choice!), but I believe that there
+are valid use cases for the reflection API and that this is one of them. By using reflection we're able to provide a much nicer API than Hibernate.
+The most common argument made against the reflection API is the speed impact. This should not be too much of a concern in this case as this
+is something that happens once during application startup / bootstrapping. 
+
+This option will detect all Hibernate @*EventListener@ interfaces implemented by the instance and any super classes and add them
+to the other event listeners. 
+
+Below is an example for this plugin.
+
+{code:java}
+import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor
+
+class EventListenerConfigurator implements HibernateConfigPostProcessor {
+
+    // This class implements most of Hibernates *EventListener interfaces
+    // in order to translate events into Hawk Events. 
+    HibernateEventListener hibernateEventListener;
+
+    @Override
+    public void doPostProcessing(final Configuration configuration) throws HibernateException {
+        EventListeners eventListeners = configuration.getEventListeners();
+        HibernateEventUtil.addListener(eventListeners, hibernateEventListener);
+    }
+
+}
+{code}

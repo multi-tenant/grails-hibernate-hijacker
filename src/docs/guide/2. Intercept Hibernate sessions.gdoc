@@ -1,3 +1,4 @@
+New Hibernate sessions will be published as events. There are various ways of subscribing to the events. 
 
 h3. From other plugins
 
@@ -13,3 +14,7 @@ def doWithEvents = { ApplicationContext ctx ->
     
 }
 {code}
+
+h3. Other options
+
+Have a look at the Hawk Eventing documentation for more information on how to subscribe to events. 

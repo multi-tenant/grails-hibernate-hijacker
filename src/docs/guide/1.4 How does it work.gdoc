@@ -2,5 +2,5 @@
 
 Hibernate's SessionFactory is constructed as usual and wrapped with a proxy. The proxy does two things:
 
- 1. Publishes session instances returned by the openSession methods via the event broker. 
- 2. Intercepts calls to getCurrentSession and delegates them to an instance of CurrentSessionContext we have initiated with a reference to the SessionFactory **proxy** instead of the actual object. This is great because it allows us to support webflows without introducing a compile time dependency to the webflow plugin. 
+# Publishes session instances returned by the openSession methods via the event broker. 
+# Intercepts calls to getCurrentSession and delegates them to an instance of CurrentSessionContext we have initiated with a reference to the SessionFactory **proxy** instead of the actual object. This is great because it allows us to support webflows without introducing a compile time dependency to the webflow plugin. 
