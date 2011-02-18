@@ -1,0 +1,3 @@
+grails.plugin.hibernatehijacker.hibernate
+grails.plugin.hibernatehijacker.hibernate.events
+grails.plugin.hibernatehijacker.spring

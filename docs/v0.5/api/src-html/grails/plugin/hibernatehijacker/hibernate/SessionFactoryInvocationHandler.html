@@ -1,0 +1,112 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package grails.plugin.hibernatehijacker.hibernate;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import grails.plugins.hawkeventing.EventBroker;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.lang.reflect.InvocationHandler;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.lang.reflect.Method;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import org.hibernate.SessionFactory;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import org.hibernate.context.CurrentSessionContext;<a name="line.7"></a>
+<FONT color="green">008</FONT>    <a name="line.8"></a>
+<FONT color="green">009</FONT>    /**<a name="line.9"></a>
+<FONT color="green">010</FONT>     * SessionFactory method invocation will be passing through here. <a name="line.10"></a>
+<FONT color="green">011</FONT>     * @author Kim A. Betti &lt;kim.betti@gmail.com&gt;<a name="line.11"></a>
+<FONT color="green">012</FONT>     */<a name="line.12"></a>
+<FONT color="green">013</FONT>    public class SessionFactoryInvocationHandler implements InvocationHandler {<a name="line.13"></a>
+<FONT color="green">014</FONT>        <a name="line.14"></a>
+<FONT color="green">015</FONT>        public static final String OPEN_SESSION = "openSession";<a name="line.15"></a>
+<FONT color="green">016</FONT>        public static final String GET_CURRENT_SESSION = "getCurrentSession";<a name="line.16"></a>
+<FONT color="green">017</FONT>        public static final String INTERCEPTED_SESSION_EVENT_NAME = "hibernate.sessionCreated";<a name="line.17"></a>
+<FONT color="green">018</FONT>        <a name="line.18"></a>
+<FONT color="green">019</FONT>        private SessionFactory realSessionFactory;<a name="line.19"></a>
+<FONT color="green">020</FONT>        private EventBroker eventBroker;<a name="line.20"></a>
+<FONT color="green">021</FONT>        private CurrentSessionContext defaultCurrentSessionContext;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>        public SessionFactoryInvocationHandler(SessionFactory realSessionFactory, EventBroker eventBroker) {<a name="line.23"></a>
+<FONT color="green">024</FONT>            this.realSessionFactory = realSessionFactory;<a name="line.24"></a>
+<FONT color="green">025</FONT>            this.eventBroker = eventBroker;<a name="line.25"></a>
+<FONT color="green">026</FONT>        }<a name="line.26"></a>
+<FONT color="green">027</FONT>    <a name="line.27"></a>
+<FONT color="green">028</FONT>        @Override<a name="line.28"></a>
+<FONT color="green">029</FONT>        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {<a name="line.29"></a>
+<FONT color="green">030</FONT>            final String methodName = method.getName();<a name="line.30"></a>
+<FONT color="green">031</FONT>            <a name="line.31"></a>
+<FONT color="green">032</FONT>            if (methodName.equals(GET_CURRENT_SESSION)) <a name="line.32"></a>
+<FONT color="green">033</FONT>                return defaultCurrentSessionContext.currentSession();<a name="line.33"></a>
+<FONT color="green">034</FONT>            <a name="line.34"></a>
+<FONT color="green">035</FONT>            Object returnedInstance = method.invoke(realSessionFactory, args);<a name="line.35"></a>
+<FONT color="green">036</FONT>            if (methodName.equals(OPEN_SESSION)) <a name="line.36"></a>
+<FONT color="green">037</FONT>                eventBroker.publish(INTERCEPTED_SESSION_EVENT_NAME, returnedInstance);<a name="line.37"></a>
+<FONT color="green">038</FONT>            <a name="line.38"></a>
+<FONT color="green">039</FONT>            return returnedInstance;<a name="line.39"></a>
+<FONT color="green">040</FONT>        }<a name="line.40"></a>
+<FONT color="green">041</FONT>        <a name="line.41"></a>
+<FONT color="green">042</FONT>        public void setDefaultCurrentSessionContext(CurrentSessionContext csc) {<a name="line.42"></a>
+<FONT color="green">043</FONT>            this.defaultCurrentSessionContext = csc;<a name="line.43"></a>
+<FONT color="green">044</FONT>        }<a name="line.44"></a>
+<FONT color="green">045</FONT>        <a name="line.45"></a>
+<FONT color="green">046</FONT>    }<a name="line.46"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

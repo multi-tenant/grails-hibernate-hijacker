@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>3.1. Participating in post processing of Hibernate Configuration</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    This is a very convenient way of doing things like adding Hibernate filters. 
+No need to specify a Hibernate configClass and risk having another plugin replacing it.<p class="paragraph"/>The only thing needed to participate in the post processing of Hibernate's Configuration is to create a Spring bean implementing HibernateConfigPostProcessor. 
+Your bean will be invoked when during construction of the SessionFactory.<p class="paragraph"/><div class="code"><pre>class MyConfigPostProcessor <span class="java&#45;keyword">implements</span> HibernateConfigPostProcessor &#123;<p class="paragraph"/>    @Override
+    <span class="java&#45;keyword">public</span> void doPostProcessing(Configuration configuration) <span class="java&#45;keyword">throws</span> HibernateException &#123;
+        // Do something with the configuration instance, like adding a <span class="java&#45;keyword">new</span> event listener.
+        // Have a look at EventListenerConfigurator <span class="java&#45;keyword">for</span> an example.  
+    &#125;<p class="paragraph"/>&#125;</pre></div>
+    </body>
+</html>

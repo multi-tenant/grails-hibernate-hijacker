@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>2. Intercept Hibernate sessions</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    New Hibernate sessions will be published as events. There are various ways of subscribing to the events.<p class="paragraph"/><h3>From other plugins</h3><p class="paragraph"/>One way is to add an doWithEvents closure to the plugin description file (...GrailsPlugin.groovy). 
+See Hawk Eventing's documentation for other ways of subscribing to events.<p class="paragraph"/><div class="code"><pre>def doWithEvents = &#123; ApplicationContext ctx &#45;&#62;<p class="paragraph"/>    hibernate.sessionCreated &#123; Event event &#45;&#62; 
+        // Do something with the session (event.payload)
+    &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/><h3>Other options</h3><p class="paragraph"/>Have a look at the Hawk Eventing documentation for more information on how to subscribe to events. 
+    </body>
+</html>

@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>3. Register Hibernate event listeners</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <h1><a name="3. Register Hibernate event listeners">3. Register Hibernate event listeners</a></h1>Adding Hibernate event listeners can be a pain in the a<strong class="bold"></strong>. 
+Feel free to look at the Hibernate API to get an idea of what you have to go through if you want to do this in a dynamic fashion.<p class="paragraph"/><h3>Convenient option using reflection</h3><p class="paragraph"/>A lot of Java programmers don't touch anything using the reflection API (which often is a good choice!), but I believe that there
+are valid use cases for the reflection API and that this is one of them. By using reflection we're able to provide a much nicer API than Hibernate.
+The most common argument made against the reflection API is the speed impact. This should not be too much of a concern in this case as this
+is something that happens once during application startup / bootstrapping.<p class="paragraph"/>This option will detect all Hibernate <code>*EventListener</code> interfaces implemented by the instance and any super classes and add them
+to the other event listeners.<p class="paragraph"/>Below is an example for this plugin.<p class="paragraph"/><div class="code"><pre>class EventListenerConfigurator <span class="java&#45;keyword">implements</span> HibernateConfigPostProcessor &#123;<p class="paragraph"/>    // This class <span class="java&#45;keyword">implements</span> most of Hibernates &#42;EventListener interfaces
+    // in order to translate events into Hawk Events. 
+    HibernateEventListener hibernateEventListener;<p class="paragraph"/>    @Override
+    <span class="java&#45;keyword">public</span> void doPostProcessing(<span class="java&#45;keyword">final</span> Configuration configuration) <span class="java&#45;keyword">throws</span> HibernateException &#123;
+        EventListeners eventListeners = configuration.getEventListeners();
+        HibernateEventUtil.addListener(eventListeners, hibernateEventListener);
+    &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/><h3>Using type</h3><p class="paragraph"/>Have a look at &#8230; for types.<h2><a name="3.1. Participating in post processing of Hibernate Configuration">3.1. Participating in post processing of Hibernate Configuration</a></h2>This is a very convenient way of doing things like adding Hibernate filters. 
+No need to specify a Hibernate configClass and risk having another plugin replacing it.<p class="paragraph"/>The only thing needed to participate in the post processing of Hibernate's Configuration is to create a Spring bean implementing HibernateConfigPostProcessor. 
+Your bean will be invoked when during construction of the SessionFactory.<p class="paragraph"/><div class="code"><pre>class MyConfigPostProcessor <span class="java&#45;keyword">implements</span> HibernateConfigPostProcessor &#123;<p class="paragraph"/>    @Override
+    <span class="java&#45;keyword">public</span> void doPostProcessing(Configuration configuration) <span class="java&#45;keyword">throws</span> HibernateException &#123;
+        // Do something with the configuration instance, like adding a <span class="java&#45;keyword">new</span> event listener.
+        // Have a look at EventListenerConfigurator <span class="java&#45;keyword">for</span> an example.  
+    &#125;<p class="paragraph"/>&#125;</pre></div>
+    </body>
+</html>

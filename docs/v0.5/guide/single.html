@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>hibernate-hijacker 0.5 - Reference Documentation</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Style" charset="utf-8"/>
+        <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
+    </head>
+    <body class="body">
+        <div id="header">
+            <div class="images"><br/><br/>
+                <a href="http://grails.org" target="_blank"><img alt="The Grails Framework" src="../img/grails.png" border="0"/></a>
+                <span style="right:30px; top:20px; position:absolute;">
+                    <a href="../index.html" target="_top">Frames</a> | <a href="index.html" target="_top">No Frames</a><br/><br/>
+                    <a href="http://springsource.com" target="_blank"><img alt="SpringSource - A Division of VMware" src="../img/springsource-logo.png" border="0"/></a>
+                </span>
+            </div>
+            <div class="message">hibernate-hijacker</div>
+            <h1>hibernate-hijacker - Reference Documentation</h1>
+            <p><strong>Authors:</strong> Kim A. Betti</p>
+            <p><strong>Version:</strong> 0.5</p>
+            <em></em>
+        </div>
+
+        <div id="toc">
+            <h2>Table of Contents</h2>
+            <div class="tocItem" style="margin-left:0px"><a href="#1. Overview">1. Overview</a></div><div class="tocItem" style="margin-left:10px"><a href="#1.1 Design goal">1.1 Design goal</a></div><div class="tocItem" style="margin-left:10px"><a href="#1.2 Dependencies">1.2 Dependencies</a></div><div class="tocItem" style="margin-left:10px"><a href="#1.3 Problems">1.3 Problems</a></div><div class="tocItem" style="margin-left:10px"><a href="#1.4 How does it work">1.4 How does it work</a></div><div class="tocItem" style="margin-left:0px"><a href="#2. Intercept Hibernate sessions">2. Intercept Hibernate sessions</a></div><div class="tocItem" style="margin-left:0px"><a href="#3. Participating in post processing of Hibernate Configuration">3. Participating in post processing of Hibernate Configuration</a></div><div class="tocItem" style="margin-left:10px"><a href="#3.1. Register Hibernate event listeners">3.1. Register Hibernate event listeners</a></div><div class="tocItem" style="margin-left:0px"><a href="#5. Changelog">5. Changelog</a></div><div class="tocItem" style="margin-left:0px"><a href="#6. Roadmap">6. Roadmap</a></div>
+        </div>
+        <div id="content">
+            <h1><a name="1. Overview">1. Overview</a></h1>This plugin was originally created to provide a less intrusive way of intercepting new Hibernate sessions. 
+Parts of this solution turned out to be useful to other plugins as well. <h2><a name="1.1 Design goal">1.1 Design goal</a></h2>This plugin aims to provide:
+<ul class="star">
+<li>A non-intrusive (as far as humanly possible) way of intercepting new Hibernate sessions.</li>
+<li>Hooks to participate in Hibernate configuration during application startup.</li>
+<li>Non-ceremonial way of listening in on various Hibernate events.</li>
+</ul><p class="paragraph"/><h2><a name="1.2 Dependencies">1.2 Dependencies</a></h2>This plugin requires <a href="http://www.github.com/multi-tenant/grails-hawk-eventing" target="blank">Hawk Eventing</a> and the Hibernate plugin (dah..).<h2><a name="1.3 Problems">1.3 Problems</a></h2><h3>Intercepting new sessions</h3><p class="paragraph"/>Hibernate has a rich event API, but for some reason it doesn't expose new sessions. 
+There is a <a href="http://docs.jboss.org/hibernate/core/3.5/api/org/hibernate/SessionFactoryObserver.html" target="blank">SessionFactoryObserver</a>, but no SessionObserver. 
+This is needed to do things like enabling Hibernate filters. Creating a non-intrusive / violent solution to this turned out to be incredible difficult.<p class="paragraph"/>See this <a href="http://www.developer-b.com/blog/entry/1635/2010/oct/07/intercepting-hibernate-sessions" target="blank">blog post</a> for more information on the problems involved. <h2><a name="1.4 How does it work">1.4 How does it work</a></h2><a href="http://grails.1312388.n4.nabble.com/Why-aren-t-the-session-bound-to-thread-during-requests-when-I-proxy-the-sessionFactory-bean-td2893502.html#a2893502" target="blank">See this post for a summary of some of the difficulties involved with this</a>.<p class="paragraph"/>Hibernate's SessionFactory is constructed as usual and wrapped with a proxy. The proxy does two things:
+<ol>
+<li>Publishes session instances returned by the openSession methods via the event broker.</li>
+<li>Intercepts calls to getCurrentSession and delegates them to an instance of CurrentSessionContext we have initiated with a reference to the SessionFactory <strong class="bold"></strong>proxy<strong class="bold"></strong> instead of the actual object. This is great because it allows us to support webflows without introducing a compile time dependency to the webflow plugin.</li>
+</ol><p class="paragraph"/><h1><a name="2. Intercept Hibernate sessions">2. Intercept Hibernate sessions</a></h1>New Hibernate sessions will be published as events. There are various ways of subscribing to the events.<p class="paragraph"/><h3>From other plugins</h3><p class="paragraph"/>One way is to add an doWithEvents closure to the plugin description file (...GrailsPlugin.groovy). 
+See Hawk Eventing's documentation for other ways of subscribing to events.<p class="paragraph"/><div class="code"><pre>def doWithEvents = &#123; ApplicationContext ctx &#45;&#62;<p class="paragraph"/>    hibernate.sessionCreated &#123; Event event &#45;&#62; 
+        // Do something with the session (event.payload)
+    &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/><h3>Other options</h3><p class="paragraph"/>Have a look at the Hawk Eventing documentation for more information on how to subscribe to events. <h1><a name="3. Participating in post processing of Hibernate Configuration">3. Participating in post processing of Hibernate Configuration</a></h1>This is a very convenient way of doing things like adding Hibernate filters. 
+No need to specify a Hibernate configClass and risk having another plugin replacing it.<p class="paragraph"/>The only thing needed to participate in the post processing of Hibernate's Configuration is to create a 
+Spring bean implementing HibernateConfigPostProcessor. Your bean will be invoked when during construction of the SessionFactory.<p class="paragraph"/><div class="code"><pre>class MyConfigPostProcessor <span class="java&#45;keyword">implements</span> HibernateConfigPostProcessor &#123;<p class="paragraph"/>    @Override
+    <span class="java&#45;keyword">public</span> void doPostProcessing(Configuration configuration) <span class="java&#45;keyword">throws</span> HibernateException &#123;
+        // Do something with the configuration instance, like adding a <span class="java&#45;keyword">new</span> event listener.
+        // Have a look at EventListenerConfigurator <span class="java&#45;keyword">for</span> an example.  
+    &#125;<p class="paragraph"/>&#125;</pre></div><h2><a name="3.1. Register Hibernate event listeners">3.1. Register Hibernate event listeners</a></h2>Adding Hibernate event listeners can be a pain in the a<strong class="bold"></strong>. 
+Feel free to look at the Hibernate API to get an idea of what you have to go through if you want to do this in a dynamic fashion.<p class="paragraph"/><h3>Convenient option using reflection</h3><p class="paragraph"/>A lot of Java programmers don't touch anything using the reflection API (which often is a good choice!), but I believe that there
+are valid use cases for the reflection API and that this is one of them. By using reflection we're able to provide a much nicer API than Hibernate.
+The most common argument made against the reflection API is the speed impact. This should not be too much of a concern in this case as this
+is something that happens once during application startup / bootstrapping.<p class="paragraph"/>This option will detect all Hibernate <code>*EventListener</code> interfaces implemented by the instance and any super classes and add them
+to the other event listeners.<p class="paragraph"/>Below is an example for this plugin.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor<p class="paragraph"/>class EventListenerConfigurator <span class="java&#45;keyword">implements</span> HibernateConfigPostProcessor &#123;<p class="paragraph"/>    // This class <span class="java&#45;keyword">implements</span> most of Hibernates &#42;EventListener interfaces
+    // in order to translate events into Hawk Events. 
+    HibernateEventListener hibernateEventListener;<p class="paragraph"/>    @Override
+    <span class="java&#45;keyword">public</span> void doPostProcessing(<span class="java&#45;keyword">final</span> Configuration configuration) <span class="java&#45;keyword">throws</span> HibernateException &#123;
+        EventListeners eventListeners = configuration.getEventListeners();
+        HibernateEventUtil.addListener(eventListeners, hibernateEventListener);
+    &#125;<p class="paragraph"/>&#125;</pre></div><h1><a name="5. Changelog">5. Changelog</a></h1><h3>v0.5 - February the 18th. 2011</h3>
+<ul class="star">
+<li>Simplified registration of Hibernate event listeners</li>
+<li>More documentation</li>
+</ul><p class="paragraph"/><h3>v0.3 - Valentines day 2011</h3>
+<ul class="star">
+<li>First stab at the documentation</li>
+<li>Some code cleanups</li>
+</ul><p class="paragraph"/><h3>v0.2.5 - November the 28th. 2010</h3>
+<ul class="star">
+<li>Integrated Hawk Eventing v0.4</li>
+</ul><p class="paragraph"/><h1><a name="6. Roadmap">6. Roadmap</a></h1><ul class="star">
+<li>Configuration option for turning of Hibernate event listening?</li>
+<li>More tests (a lot of these things are difficult to test)</li>
+<li>Find better names for some of the classes / concepts.</li>
+</ul><p class="paragraph"/>
+        </div>
+        <div id="footer">
+             Have a nice day!
+        </div>
+    </body>
+</html>

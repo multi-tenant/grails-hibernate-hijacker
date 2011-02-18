@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>1.4 How does it work</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <a href="http://grails.1312388.n4.nabble.com/Why-aren-t-the-session-bound-to-thread-during-requests-when-I-proxy-the-sessionFactory-bean-td2893502.html#a2893502" target="blank">See this post for a summary of some of the difficulties involved with this</a>.<p class="paragraph"/>Hibernate's SessionFactory is constructed as usual and wrapped with a proxy. The proxy does two things:
+<ol>
+<li>Publishes session instances returned by the openSession methods via the event broker.</li>
+<li>Intercepts calls to getCurrentSession and delegates them to an instance of CurrentSessionContext we have initiated with a reference to the SessionFactory <strong class="bold"></strong>proxy<strong class="bold"></strong> instead of the actual object. This is great because it allows us to support webflows without introducing a compile time dependency to the webflow plugin.</li>
+</ol><p class="paragraph"/>
+    </body>
+</html>
