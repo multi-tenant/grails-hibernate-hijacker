@@ -4,7 +4,7 @@ import grails.plugin.hibernatehijacker.hibernate.events.*;
 
 class HibernateHijackerGrailsPlugin {
   
-    def version = "0.5"
+    def version = "0.5.1"
 
     def grailsVersion = "1.3.5 > *"
     def dependsOn = [ : ]
