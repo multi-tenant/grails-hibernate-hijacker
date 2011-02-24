@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>2.5. Composite index DSL</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    Support for defining multi column / composite indexes was added in 0.6. 
+See <a href="http://jira.codehaus.org/browse/GRAILS-7301" target="blank">GRAILS-7301</a> for more information.<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstname, surname
+    <span class="java&#45;object">String</span> phone<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        // &#8230;
+    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> indexes = &#123;
+        name_idx 'surname', 'firstname'
+        phone_idx 'phone'
+    &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+This is a very simple implementation and will probably not 
+work if you've changed the table name in the mapping closure. 
+</blockquote>
+    </body>
+</html>

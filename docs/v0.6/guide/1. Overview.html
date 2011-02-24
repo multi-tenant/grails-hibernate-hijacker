@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+        <title>1. Overview</title>
+        <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+    </head>
+    <body class="body">
+    <h1><a name="1. Overview">1. Overview</a></h1>This plugin was originally created to provide a less intrusive way of intercepting new Hibernate sessions. 
+Parts of this solution turned out to be useful to other plugins as well. <h2><a name="1.1 Design goal">1.1 Design goal</a></h2>This plugin aims to provide:
+<ul class="star">
+<li>A non-intrusive (as far as humanly possible) way of intercepting new Hibernate sessions.</li>
+<li>Hooks to participate in Hibernate configuration during application startup.</li>
+<li>Non-ceremonial way of listening in on various Hibernate events.</li>
+</ul><p class="paragraph"/><h2><a name="1.2 Dependencies">1.2 Dependencies</a></h2>This plugin requires <a href="http://www.github.com/multi-tenant/grails-hawk-eventing" target="blank">Hawk Eventing</a> and the Hibernate plugin (dah..).<h2><a name="1.3 Problems">1.3 Problems</a></h2><h3>Intercepting new sessions</h3><p class="paragraph"/>Hibernate has a rich event API, but for some reason it doesn't expose new sessions. 
+There is a <a href="http://docs.jboss.org/hibernate/core/3.5/api/org/hibernate/SessionFactoryObserver.html" target="blank">SessionFactoryObserver</a>, but no SessionObserver. 
+This is needed to do things like enabling Hibernate filters. Creating a non-intrusive / violent solution to this turned out to be incredible difficult.<p class="paragraph"/>See this <a href="http://www.developer-b.com/blog/entry/1635/2010/oct/07/intercepting-hibernate-sessions" target="blank">blog post</a> for more information on the problems involved. <h2><a name="1.4 How does it work">1.4 How does it work</a></h2><a href="http://grails.1312388.n4.nabble.com/Why-aren-t-the-session-bound-to-thread-during-requests-when-I-proxy-the-sessionFactory-bean-td2893502.html#a2893502" target="blank">See this post for a summary of some of the difficulties involved with this</a>.<p class="paragraph"/>Hibernate's SessionFactory is constructed as usual and wrapped with a proxy. The proxy does two things:
+<ol>
+<li>Publishes session instances returned by the openSession methods via the event broker.</li>
+<li>Intercepts calls to getCurrentSession and delegates them to an instance of CurrentSessionContext we have initiated with a reference to the SessionFactory <strong class="bold"></strong>proxy<strong class="bold"></strong> instead of the actual object. This is great because it allows us to support webflows without introducing a compile time dependency to the webflow plugin.</li>
+</ol><p class="paragraph"/>
+    </body>
+</html>

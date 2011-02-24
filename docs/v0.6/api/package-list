@@ -1,0 +1,5 @@
+grails.plugin.hibernatehijacker.exception
+grails.plugin.hibernatehijacker.hibernate
+grails.plugin.hibernatehijacker.hibernate.events
+grails.plugin.hibernatehijacker.indexdsl
+grails.plugin.hibernatehijacker.spring
