@@ -139,7 +139,7 @@ function windowTitle()
 </dt><dd></dd>
 <dt><a href="DefaultPackage/HibernateIndexBuilder.html#addColumnToIndex(org.hibernate.mapping.Index, java.lang.String)" title="Method in HibernateIndexBuilder"><b>addColumnToIndex</b>(Index, String)</b></a> - Method in <a href="DefaultPackage/HibernateIndexBuilder.html">HibernateIndexBuilder</a>
 </dt><dd></dd>
-<dt><a href="DefaultPackage/IndexDslPostProcessor.html#addIndexesFrom(org.codehaus.groovy.grails.commons.GrailsDomainClass, org.hibernate.mapping.Table)" title="Method in IndexDslPostProcessor"><b>addIndexesFrom</b>(GrailsDomainClass, Table)</b></a> - Method in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
+<dt><a href="DefaultPackage/IndexDslPostProcessor.html#addIndexesFrom(org.hibernate.mapping.PersistentClass)" title="Method in IndexDslPostProcessor"><b>addIndexesFrom</b>(PersistentClass)</b></a> - Method in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
 </dt><dd></dd>
 <dt><a href="DefaultPackage/HibernateEventUtil.html#addListener(org.hibernate.cfg.Configuration, java.lang.String, java.lang.Class, java.lang.Object)" title="Method in HibernateEventUtil"><b>addListener</b>(Configuration, String, Class, Object)</b></a> - Method in <a href="DefaultPackage/HibernateEventUtil.html">HibernateEventUtil</a>
 </dt><dd></dd>
@@ -289,8 +289,6 @@ function windowTitle()
 
 <dt><a href="DefaultPackage/HibernateEventUtil.html#findEventListenerInterfaces(java.lang.Class, java.util.List)" title="Method in HibernateEventUtil"><b>findEventListenerInterfaces</b>(Class, List)</b></a> - Method in <a href="DefaultPackage/HibernateEventUtil.html">HibernateEventUtil</a>
 </dt><dd></dd>
-<dt><a href="DefaultPackage/IndexDslPostProcessor.html#findTableByName(org.hibernate.cfg.Configuration, java.lang.String)" title="Method in IndexDslPostProcessor"><b>findTableByName</b>(Configuration, String)</b></a> - Method in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
-</dt><dd>TODO: This is might not be good enough if the table is mapped to a different name</dd>
 <dt><a href="DefaultPackage/Person.html#firstname" title="Property in Person"><b>firstname</b></a> - Property in <a href="DefaultPackage/Person.html">Person</a>
 </dt><dd></dd>
 <dt><a href="DefaultPackage/HibernateIndexBuilder.html#from(org.hibernate.mapping.Table, groovy.lang.Closure)" title="Method in HibernateIndexBuilder"><b>from</b>(Table, Closure)</b></a> - Method in <a href="DefaultPackage/HibernateIndexBuilder.html">HibernateIndexBuilder</a>
@@ -309,13 +307,11 @@ function windowTitle()
 </dt><dd></dd>
 <dt><a href="DefaultPackage/HibernateIndexBuilder.html#getColumnByName(java.lang.String)" title="Method in HibernateIndexBuilder"><b>getColumnByName</b>(String)</b></a> - Method in <a href="DefaultPackage/HibernateIndexBuilder.html">HibernateIndexBuilder</a>
 </dt><dd></dd>
-<dt><a href="DefaultPackage/IndexDslPostProcessor.html#getDomainClasses()" title="Method in IndexDslPostProcessor"><b>getDomainClasses</b>()</b></a> - Method in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
-</dt><dd></dd>
 <dt><a href="DefaultPackage/HibernateEventUtil.html#getExistingListeners(org.hibernate.event.EventListeners, java.lang.Class)" title="Method in HibernateEventUtil"><b>getExistingListeners</b>(EventListeners, Class)</b></a> - Method in <a href="DefaultPackage/HibernateEventUtil.html">HibernateEventUtil</a>
 </dt><dd></dd>
-<dt><a href="DefaultPackage/SessionFactoryPostProcessor.html#getOrder()" title="Method in SessionFactoryPostProcessor"><b>getOrder</b>()</b></a> - Method in <a href="DefaultPackage/SessionFactoryPostProcessor.html">SessionFactoryPostProcessor</a>
+<dt><a href="DefaultPackage/IndexDslPostProcessor.html#getIndexClosure(java.lang.Class)" title="Method in IndexDslPostProcessor"><b>getIndexClosure</b>(Class)</b></a> - Method in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
 </dt><dd></dd>
-<dt><a href="DefaultPackage/IndexDslPostProcessor.html#grailsApplication" title="Field in IndexDslPostProcessor"><b>grailsApplication</b></a> - Field in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
+<dt><a href="DefaultPackage/SessionFactoryPostProcessor.html#getOrder()" title="Method in SessionFactoryPostProcessor"><b>getOrder</b>()</b></a> - Method in <a href="DefaultPackage/SessionFactoryPostProcessor.html">SessionFactoryPostProcessor</a>
 </dt><dd></dd>
 <dt><a href="DefaultPackage/HibernateHijackerGrailsPlugin.html#grailsVersion" title="Property in HibernateHijackerGrailsPlugin"><b>grailsVersion</b></a> - Property in <a href="DefaultPackage/HibernateHijackerGrailsPlugin.html">HibernateHijackerGrailsPlugin</a>
 </dt><dd></dd>
@@ -329,6 +325,8 @@ function windowTitle()
 
 <dl>
 
+<dt><a href="DefaultPackage/IndexDslPostProcessor.html#hasIndexClosure(org.hibernate.mapping.PersistentClass)" title="Method in IndexDslPostProcessor"><b>hasIndexClosure</b>(PersistentClass)</b></a> - Method in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
+</dt><dd></dd>
 <dt><a href="DefaultPackage/BookSpec.html#Hibernate sessions are intercepted()" title="Method in BookSpec"><b>Hibernate sessions are intercepted</b>()</b></a> - Method in <a href="DefaultPackage/BookSpec.html">BookSpec</a>
 </dt><dd></dd>
 <dt><a href="grails/plugin/hibernatehijacker/hibernate/HibernateConfigPostProcessor.html" title="Class in grails.plugin.hibernatehijacker.hibernate"><b>HibernateConfigPostProcessor</b></a> - Class in <a href="./grails/plugin/hibernatehijacker/hibernate/package-summary.html">grails.plugin.hibernatehijacker.hibernate</a>
@@ -610,8 +608,6 @@ function windowTitle()
 <dt><a href="DefaultPackage/HibernateEventListener.html#setEventBroker(EventBroker)" title="Method in HibernateEventListener"><b>setEventBroker</b>(EventBroker)</b></a> - Method in <a href="DefaultPackage/HibernateEventListener.html">HibernateEventListener</a>
 </dt><dd></dd>
 <dt><a href="DefaultPackage/SessionFactoryProxyFactory.html#setEventBroker(EventBroker)" title="Method in SessionFactoryProxyFactory"><b>setEventBroker</b>(EventBroker)</b></a> - Method in <a href="DefaultPackage/SessionFactoryProxyFactory.html">SessionFactoryProxyFactory</a>
-</dt><dd></dd>
-<dt><a href="DefaultPackage/IndexDslPostProcessor.html#setGrailsApplication(org.codehaus.groovy.grails.commons.GrailsApplication)" title="Method in IndexDslPostProcessor"><b>setGrailsApplication</b>(GrailsApplication)</b></a> - Method in <a href="DefaultPackage/IndexDslPostProcessor.html">IndexDslPostProcessor</a>
 </dt><dd></dd>
 <dt><a href="DefaultPackage/SessionFactoryPostProcessor.html#setHibernateConfigPostProcessors(org.springframework.beans.factory.config.ConfigurableListableBeanFactory, org.springframework.beans.MutablePropertyValues)" title="Method in SessionFactoryPostProcessor"><b>setHibernateConfigPostProcessors</b>(ConfigurableListableBeanFactory, MutablePropertyValues)</b></a> - Method in <a href="DefaultPackage/SessionFactoryPostProcessor.html">SessionFactoryPostProcessor</a>
 </dt><dd>Looks up all beans implementing HibernateConfigPostProcessor and makes
