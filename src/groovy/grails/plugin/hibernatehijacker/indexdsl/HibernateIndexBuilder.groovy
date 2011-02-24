@@ -24,7 +24,6 @@ class HibernateIndexBuilder {
     
     private Logger log = LoggerFactory.getLogger(HibernateIndexBuilder);
 
-    private List indexes = []
     private Closure closure
     private Table table
     
@@ -33,38 +32,42 @@ class HibernateIndexBuilder {
         this.closure = closure
     }
     
-    static List<Index> from(Table table, Closure closure) {
-        def builder = new HibernateIndexBuilder(table, closure)
-        return builder.build()
+    static void from(Table table, Closure closure) {
+        new HibernateIndexBuilder(table, closure).build()
     }
     
-    public List<Index> build() {
+    public void build() {
         closure.delegate = this
         closure.resolveStrategy = Closure.DELEGATE_ONLY
         closure.call()
-        return indexes
     }
     
-    void methodMissing(String indexName, columnNames) {
-        log.debug "Defining $indexName on ${table.name}"
+    void methodMissing(String indexName, arguments) {
+        log.debug "Defining $indexName on " + table.getName()
         
         Index index = table.getOrCreateIndex(indexName)
-        for (String columnName : columnNames) {
-            Column column = getColumnByName(columnName)
-            if (column == null) {
-                throw new HibernateHijackerException("Unable to find column $columnName in table ${table.name}")    
+        for (Object argument : arguments) {
+            if (argument instanceof String) {
+                addColumnToIndex(index, argument)
+            } else {
+                throw new HibernateHijackerException("Expected column name (String), got instead " + argument)
             }
-            
-            index.addColumn(column)
         }
-  
-        indexes << index
     }
     
+    private void addColumnToIndex(Index index, String columnName) {
+        Column column = getColumnByName(columnName)
+        if (column == null) {
+            throw new HibernateHijackerException("Unable to find column $columnName in table ${table.name}")
+        }
+        
+        index.addColumn(column)
+    }
+
     private Column getColumnByName(String name) {
         return table.columnIterator.find { Column column ->
             column.canonicalName == name
         }
     }
-    
+        
 }

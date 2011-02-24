@@ -12,21 +12,24 @@ import grails.plugin.spock.UnitSpec
  * @author Kim A. Betti
  */
 class HibernateIndexBuilderSpec extends UnitSpec {
-
-    def "simple example"() {
-        given:
-        Table table = new Table("person")
+    
+    Table table
+    
+    def setup() {
+        table = new Table("person")
         table.addColumn(new Column("surname"))
         table.addColumn(new Column("firstname"))
-        
+    }
+
+    def "simple example - composite index"() {
         when:
-        List<Index> indexes = HibernateIndexBuilder.from (table) {
+        HibernateIndexBuilder.from(table) {
             name_idx 'surname', 'firstname'
         }
         
         then:
-        indexes.size() == 1
-        Index nameIndex = indexes.get(0)
+        Iterator indexIterator = table.getIndexIterator()
+        Index nameIndex = indexIterator.next()
         nameIndex.getName() == "name_idx"
         
         and:
@@ -43,16 +46,13 @@ class HibernateIndexBuilderSpec extends UnitSpec {
     }
     
     def "trying to map unknown column should throw exception"() {
-        given:
-        Table table = new Table("test_table")
-        
         when:
-        HibernateIndexBuilder.from (table) {
+        HibernateIndexBuilder.from(table) {
             some_idx 'missing_column'
         }
         
         then:
         HibernateHijackerException hex = thrown()
     }
-    
+
 }

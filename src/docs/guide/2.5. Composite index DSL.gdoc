@@ -1,0 +1,25 @@
+Support for defining multi column / composite indexes was added in 0.6. 
+See [GRAILS-7301|http://jira.codehaus.org/browse/GRAILS-7301] for more information. 
+
+{code:java}
+class Person {
+    
+    String firstname, surname
+    String phone
+    
+    static constraints = {
+        // ...
+    }
+    
+    static indexes = {
+        name_idx 'surname', 'firstname'
+        phone_idx 'phone'
+    }
+    
+}
+{code}
+
+{note}
+This is a very simple implementation and will probably not 
+work if you've changed the table name in the mapping closure. 
+{note}
