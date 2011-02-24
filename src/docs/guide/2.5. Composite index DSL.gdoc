@@ -4,7 +4,7 @@ See [GRAILS-7301|http://jira.codehaus.org/browse/GRAILS-7301] for more informati
 {code:java}
 class Person {
     
-    String firstname, surname
+    String firstName, surName
     String phone
     
     static constraints = {
@@ -12,7 +12,7 @@ class Person {
     }
     
     static indexes = {
-        name_idx 'surname', 'firstname'
+        name_idx 'sur_name', 'first_name'
         phone_idx 'phone'
     }
     
@@ -20,6 +20,6 @@ class Person {
 {code}
 
 {note}
-This is a very simple implementation and will probably not 
-work if you've changed the table name in the mapping closure. 
+Note that column names are defined by the name they'll get in the database. 
+So firstName becomes first_name. 
 {note}

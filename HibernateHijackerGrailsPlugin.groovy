@@ -46,9 +46,7 @@ This plugin publishes intercepted Session instances to a lightweight event broke
             hibernateEventListener = ref("hibernateEventListener")
         }
         
-        indexDslConfigurator(IndexDslPostProcessor) {
-            grailsApplication = ref("grailsApplication")
-        }
+        indexDslConfigurator(IndexDslPostProcessor) 
         
         sessionFactoryPostProcessor(SessionFactoryPostProcessor) 
     }

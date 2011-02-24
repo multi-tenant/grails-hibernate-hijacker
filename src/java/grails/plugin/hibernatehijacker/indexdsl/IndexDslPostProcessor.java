@@ -1,18 +1,15 @@
 package grails.plugin.hibernatehijacker.indexdsl;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-
-import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.codehaus.groovy.grails.commons.GrailsClass;
 import org.codehaus.groovy.grails.commons.GrailsClassUtils;
-import org.codehaus.groovy.grails.commons.GrailsDomainClass;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.hibernate.mapping.PersistentClass;
+
 
 import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor;
 import groovy.lang.Closure;
@@ -26,54 +23,37 @@ import groovy.lang.Closure;
  */
 public class IndexDslPostProcessor implements HibernateConfigPostProcessor {
 
-    private GrailsApplication grailsApplication;
     private Logger log = LoggerFactory.getLogger(IndexDslPostProcessor.class);
 
     @Override
+    @SuppressWarnings("unchecked")
     public void doPostProcessing(Configuration configuration) throws HibernateException {
-        for (GrailsDomainClass domainClass : getDomainClasses()) {
-            Table table = findTableByName(configuration, domainClass.getName());
-            if (table != null) {
-                addIndexesFrom(domainClass, table);
+        Iterator<PersistentClass> mappingIterator = configuration.getClassMappings();
+        while (mappingIterator.hasNext()) {
+            PersistentClass persistentClass = mappingIterator.next();
+            if (hasIndexClosure(persistentClass)) {
+                addIndexesFrom(persistentClass);
             }
         }
     }
 
-    protected List<GrailsDomainClass> getDomainClasses() {
-        List<GrailsDomainClass> domainClasses = new ArrayList<GrailsDomainClass>();
-        for (GrailsClass domainClass : grailsApplication.getArtefacts("Domain")) {
-            domainClasses.add((GrailsDomainClass) domainClass);
-        }
-
-        return domainClasses;
+    protected boolean hasIndexClosure(PersistentClass persistentClass) {
+        Class<?> domainClass = persistentClass.getMappedClass();
+        Closure indexes = getIndexClosure(domainClass);
+        return indexes != null;
     }
 
-    /**
-     * TODO: This is might not be good enough if the table is mapped to a different name
-     */
-    protected Table findTableByName(Configuration configuration, String name) {
-        Iterator<?> tableIterator = configuration.getTableMappings();
-        while (tableIterator.hasNext()) {
-            Table table = (Table) tableIterator.next();
-            if (table.getName().equalsIgnoreCase(name)) {
-                return table;
-            }
-        }
-
-        log.warn("Unable to find Hibernate table for " + name);
-        return null;
-    }
-
-    protected void addIndexesFrom(GrailsDomainClass domainClass, Table table) {
-        Closure indexClosure = (Closure) GrailsClassUtils.getStaticPropertyValue(domainClass.getClazz(), "indexes");
+    protected void addIndexesFrom(PersistentClass persistentClass) {
+        Table table = persistentClass.getTable();
+        Closure indexClosure = getIndexClosure(persistentClass.getMappedClass());
         if (indexClosure != null) {
-            log.info("Reading indexes from " + domainClass.getName());
+            log.info("Reading indexes from " + persistentClass.getClassName());
             HibernateIndexBuilder.from(table, indexClosure);
         }
     }
 
-    public void setGrailsApplication(GrailsApplication grailsApplication) {
-        this.grailsApplication = grailsApplication;
+    protected Closure getIndexClosure(Class<?> domainClass) {
+        return (Closure) GrailsClassUtils.getStaticPropertyValue(domainClass, "indexes");
     }
 
 }
