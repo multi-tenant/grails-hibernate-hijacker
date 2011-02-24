@@ -10,19 +10,24 @@ import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 
 /**
- * Small DSL for defining database indexes.
- * Sample usage:
+ * DSL for defining single and multi-column indexes.
+ * Just add a closure like the one below to your domain 
+ * classes and you're ready to go! 
  * 
  * static indexes = {
  *      index_name 'first_column', 'second_column', '...'
  *      second_index '...'
  * }
  * 
+ * Important! The column are identified by the database and
+ * not property name. Camel cased property names will be translated
+ * to a underscore based convention. 
+ * 
  * @author Kim A. Betti
  */
 class HibernateIndexBuilder {
     
-    private Logger log = LoggerFactory.getLogger(HibernateIndexBuilder);
+    private static Logger log = LoggerFactory.getLogger(this);
 
     private Closure closure
     private Table table
@@ -42,7 +47,7 @@ class HibernateIndexBuilder {
         closure.call()
     }
     
-    void methodMissing(String indexName, arguments) {
+    public void methodMissing(String indexName, arguments) {
         log.debug "Defining $indexName on " + table.getName()
         
         Index index = table.getOrCreateIndex(indexName)
@@ -58,16 +63,18 @@ class HibernateIndexBuilder {
     private void addColumnToIndex(Index index, String columnName) {
         Column column = getColumnByName(columnName)
         if (column == null) {
-            throw new HibernateHijackerException("Unable to find column $columnName in table ${table.name}")
+            String exMessage = "Unable to find column $columnName in table ${table.name}"
+            throw new HibernateHijackerException(exMessage)
         }
         
+        log.debug "Appending column ${columnName} to index ${index.name}"
         index.addColumn(column)
     }
 
     private Column getColumnByName(String name) {
-        return table.columnIterator.find { Column column ->
+        table.columnIterator.find { Column column ->
             column.canonicalName == name
         }
     }
-        
+
 }

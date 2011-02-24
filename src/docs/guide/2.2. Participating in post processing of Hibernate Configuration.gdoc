@@ -15,3 +15,7 @@ class MyConfigPostProcessor implements HibernateConfigPostProcessor {
 
 }
 {code}
+
+{note}
+Important! Remember to register the Spring bean! See Grails documentation for information on how to do that. 
+{note}
