@@ -22,6 +22,8 @@ log4j = {
 
     warn   'org.mortbay.log'
     
+    info   'grails.plugin.hibernatehijacker'
+    
 }
 
 grails.doc.authors="Kim A. Betti"

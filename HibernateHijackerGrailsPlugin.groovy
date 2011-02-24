@@ -1,10 +1,11 @@
-import grails.plugin.hibernatehijacker.spring.*;
-import grails.plugin.hibernatehijacker.hibernate.*;
-import grails.plugin.hibernatehijacker.hibernate.events.*;
+import grails.plugin.hibernatehijacker.spring.*
+import grails.plugin.hibernatehijacker.hibernate.*
+import grails.plugin.hibernatehijacker.hibernate.events.*
+import grails.plugin.hibernatehijacker.indexdsl.*
 
 class HibernateHijackerGrailsPlugin {
   
-    def version = "0.5.1"
+    def version = "0.6"
 
     def grailsVersion = "1.3.5 > *"
     def dependsOn = [ : ]
@@ -45,7 +46,11 @@ This plugin publishes intercepted Session instances to a lightweight event broke
             hibernateEventListener = ref("hibernateEventListener")
         }
         
-        sessionFactoryPostProcessor(SessionFactoryPostProcessor)
+        indexDslConfigurator(IndexDslPostProcessor) {
+            grailsApplication = ref("grailsApplication")
+        }
+        
+        sessionFactoryPostProcessor(SessionFactoryPostProcessor) 
     }
     
     def doWithDynamicMethods = { ctx -> }
