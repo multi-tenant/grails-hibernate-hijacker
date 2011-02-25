@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean;
 import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.context.CurrentSessionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.SpringSessionContext;
 
 /**
@@ -27,15 +27,15 @@ import org.springframework.orm.hibernate3.SpringSessionContext;
  */
 public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
 
-    private static final Log log = LogFactory.getLog(WrappedSessionFactoryBean.class);
+    private static final Logger log = LoggerFactory.getLogger(WrappedSessionFactoryBean.class);
 
     private SessionFactoryProxyFactory sessionFactoryProxyFactory;
     private List<HibernateConfigPostProcessor> hibernateConfigPostProcessors = new ArrayList<HibernateConfigPostProcessor>();
     private Map<String, Object> listenerMap;
 
     /**
-     * If no plugins has specified another CurrentSessionContextClass (like the
-     * webflow plugin) we'll use SpringSessionContext.
+     * If no plugins has specified another CurrentSessionContextClass
+     * (like the webflow plugin) we'll use SpringSessionContext.
      */
     private Class<? extends CurrentSessionContext> currentSessionContextClass = SpringSessionContext.class;
 
@@ -49,7 +49,7 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
     @Override
     protected void postProcessConfiguration(final Configuration config) throws HibernateException {
         for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors) {
-            log.debug("Passing Hibernate configuration to: " + processor.getClass().getSimpleName());
+            log.debug("Passing Hibernate configuration to: {}", processor.getClass().getSimpleName());
             processor.doPostProcessing(config);
         }
 
@@ -75,17 +75,15 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
         if (this.listenerMap != null) {
             for (String type : this.listenerMap.keySet()) {
                 Object listener = listenerMap.get(type);
-                log.debug("Adding listener for " + type + ": " + listener.getClass().getName());
-                System.out.println("Adding listener for " + type + ": " + listener.getClass().getName());
+                log.debug("Adding listener for {}: {}", type, listener.getClass().getName());
                 HibernateEventUtil.addListener(configuration, type, listener);
             }
         }
     }
 
     /**
-     * Make sure not to pass the argument to
-     * ConfigurableLocalSessionFactoryBean. We don't want Hibernate to make an
-     * instance of the CurrentSessionContext.
+     * Make sure not to pass the argument to ConfigurableLocalSessionFactoryBean.
+     * We don't want Hibernate to make an instance of the CurrentSessionContext.
      * 
      * By listening in on this we're able to support plugins like webflow
      * without introducing a compile time dependency.

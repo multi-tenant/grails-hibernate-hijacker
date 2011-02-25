@@ -7,13 +7,17 @@ import java.util.List;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.event.EventListeners;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ * Deals with all the painful things involved with adding Hibernate event listeners.
  * @see http://www.docjar.com/html/api/org/hibernate/event/EventListeners.java.html
  * @author Kim A. Betti
  */
 public class HibernateEventUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(HibernateEventUtil.class);
 
     /**
      * Finds all *EventListener interfaces registered with the class
@@ -23,6 +27,8 @@ public class HibernateEventUtil {
      * @throws Exception
      */
     public static void addListener(EventListeners eventListeners, Object listener) {
+        log.debug("Adding event listeners from: {} ", listener);
+
         try {
             List<Class<?>> listenerInterfaces = findEventListenerInterfaces(listener.getClass());
             for (Class<?> listenerInterface : listenerInterfaces) {
@@ -71,6 +77,7 @@ public class HibernateEventUtil {
     }
 
     public static void addListener(Configuration configuration, String type, Object listener) {
+        log.debug("Adding listener for {}: {}", type, listener);
         EventListeners listeners = configuration.getEventListeners();
         Class<?> listenerClass = listeners.getListenerClassFor(type);
         addListener(configuration, type, listenerClass, listener);
