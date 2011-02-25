@@ -5,7 +5,7 @@ import grails.plugin.hibernatehijacker.indexdsl.*
 
 class HibernateHijackerGrailsPlugin {
   
-    def version = "0.6"
+    def version = "0.7"
 
     def grailsVersion = "1.3.5 > *"
     def dependsOn = [ : ]
@@ -33,22 +33,29 @@ This plugin publishes intercepted Session instances to a lightweight event broke
 '''
 
     def doWithSpring = {
-		
+
+        // Responsible for wrapping the real SessionFactory instance
+        // inside a JDK proxy so we can intercept new sessions. 
         sessionFactoryProxyFactory(SessionFactoryProxyFactory) {
             eventBroker = ref("eventBroker")
         }
         
-        hibernateEventListener(HibernateEventListener){
-            eventBroker = ref("eventBroker")
+        // Register the Hibernate event listener responsible for proxying
+        // Hibernate events to more accessible Hawk events. 
+        hibernateEventListener(HibernateEventSubscriptionFactory) {
+            eventListener = { HibernateEventListener listener ->
+                eventBroker = ref("eventBroker")
+            }
         }
         
-        eventListenerConfigurator(EventListenerConfigurator) {
-            hibernateEventListener = ref("hibernateEventListener")
-        }
-        
+        // Reads composite database indexes from domain 
+        // classes with a static indexes property 
         indexDslConfigurator(IndexDslPostProcessor) 
         
-        sessionFactoryPostProcessor(SessionFactoryPostProcessor) 
+        // Responsible replacing the sessionFactory 
+        // with our WrappedSessionFactoryBean
+        sessionFactoryPostProcessor(SessionFactoryPostProcessor)
+         
     }
     
     def doWithDynamicMethods = { ctx -> }

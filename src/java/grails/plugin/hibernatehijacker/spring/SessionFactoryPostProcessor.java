@@ -15,9 +15,8 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.core.Ordered;
 
 /**
- * Replaces the default ConfigurableLocalSessionFactoryBean with
- * WrappedSessionFactoryBean. It will also make sure that our replacement is
- * wired with the required dependencies.
+ * Replaces the default ConfigurableLocalSessionFactoryBean with WrappedSessionFactoryBean.
+ * It will also make sure that our replacement is wired with the required dependencies.
  * 
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
