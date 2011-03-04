@@ -118,5 +118,4 @@ public class HibernateEventUtil {
         throw new Exception("Unable to get existing listeners for " + type.getSimpleName());
     }
 
-
 }

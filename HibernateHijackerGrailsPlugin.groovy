@@ -1,11 +1,12 @@
 import grails.plugin.hibernatehijacker.spring.*
+import grails.plugin.hibernatehijacker.template.*
 import grails.plugin.hibernatehijacker.hibernate.*
 import grails.plugin.hibernatehijacker.hibernate.events.*
 import grails.plugin.hibernatehijacker.indexdsl.*
 
 class HibernateHijackerGrailsPlugin {
   
-    def version = "0.7"
+    def version = "0.8"
 
     def grailsVersion = "1.3.5 > *"
     def dependsOn = [ : ]
@@ -55,6 +56,12 @@ This plugin publishes intercepted Session instances to a lightweight event broke
         // Responsible replacing the sessionFactory 
         // with our WrappedSessionFactoryBean
         sessionFactoryPostProcessor(SessionFactoryPostProcessor)
+        
+        // Implements withTransaction and withNewSession
+        hibernateTemplates(HibernateTemplates) {
+            transactionManager = ref("transactionManager")
+            sessionFactory = ref("sessionFactory")
+        }
          
     }
     

@@ -75,7 +75,6 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
         if (this.listenerMap != null) {
             for (String type : this.listenerMap.keySet()) {
                 Object listener = listenerMap.get(type);
-                log.debug("Adding listener for {}: {}", type, listener.getClass().getName());
                 HibernateEventUtil.addListener(configuration, type, listener);
             }
         }

@@ -10,24 +10,24 @@ import org.hibernate.HibernateException;
 import org.hibernate.event.*;
 
 /**
- * Brute force approach. 
+ * Brute force approach.
  * 
- * This could probably be implemented in a more dynamic 
- * fashion using Groovy, but with more overhead. 
+ * This could probably be implemented in a more dynamic
+ * fashion using Groovy, but with more overhead.
  * 
  * @author Kim A. Betti
  */
 @SuppressWarnings("serial")
-public class HibernateEventListener implements AutoFlushEventListener, DeleteEventListener, DirtyCheckEventListener, 
-        EvictEventListener, FlushEventListener, FlushEntityEventListener, LoadEventListener,
-        InitializeCollectionEventListener, LockEventListener, MergeEventListener, PersistEventListener, 
-        PostDeleteEventListener, PostInsertEventListener, PostLoadEventListener, PostUpdateEventListener, 
-        PreDeleteEventListener, PreInsertEventListener, PreLoadEventListener, PreUpdateEventListener, 
-        RefreshEventListener, ReplicateEventListener, SaveOrUpdateEventListener {
+public class HibernateEventListener implements AutoFlushEventListener, DeleteEventListener, DirtyCheckEventListener,
+EvictEventListener, FlushEventListener, FlushEntityEventListener, LoadEventListener,
+InitializeCollectionEventListener, LockEventListener, MergeEventListener, PersistEventListener,
+PostDeleteEventListener, PostInsertEventListener, PostLoadEventListener, PostUpdateEventListener,
+PreDeleteEventListener, PreInsertEventListener, PreLoadEventListener, PreUpdateEventListener,
+RefreshEventListener, ReplicateEventListener, SaveOrUpdateEventListener {
 
-    
+
     private EventBroker eventBroker;
-        
+
     public void setEventBroker(EventBroker eventBroker) {
         this.eventBroker = eventBroker;
     }
@@ -41,7 +41,7 @@ public class HibernateEventListener implements AutoFlushEventListener, DeleteEve
     public void onReplicate(ReplicateEvent event) throws HibernateException {
         publishEvent("replicate", event);
     }
-    
+
     @Override
     @SuppressWarnings("rawtypes")
     public void onRefresh(RefreshEvent event, Map arg1) throws HibernateException {
@@ -95,7 +95,7 @@ public class HibernateEventListener implements AutoFlushEventListener, DeleteEve
     public void onPostDelete(PostDeleteEvent event) {
         publishEvent("postDelete", event, event.getEntity());
     }
-    
+
     @Override
     @SuppressWarnings("rawtypes")
     public void onPersist(PersistEvent event, Map arg1) throws HibernateException {
@@ -112,7 +112,7 @@ public class HibernateEventListener implements AutoFlushEventListener, DeleteEve
     public void onMerge(MergeEvent event, Map arg1) throws HibernateException {
         onMerge(event);
     }
-    
+
     @Override
     public void onMerge(MergeEvent event) throws HibernateException {
         publishEvent("merge", event, event.getEntity());
@@ -152,7 +152,7 @@ public class HibernateEventListener implements AutoFlushEventListener, DeleteEve
     public void onDirtyCheck(DirtyCheckEvent event) throws HibernateException {
         publishEvent("dirtyCheck", event);
     }
-    
+
     @Override
     @SuppressWarnings("rawtypes")
     public void onDelete(DeleteEvent event, Set arg1) throws HibernateException {
@@ -168,21 +168,24 @@ public class HibernateEventListener implements AutoFlushEventListener, DeleteEve
     public void onAutoFlush(AutoFlushEvent event) throws HibernateException {
         publishEvent("autoFlush", event);
     }
-    
+
     private void publishEvent(String eventName, AbstractEvent event) {
         publishEvent(eventName, event, null);
     }
-    
+
+    /**
+     * Publishes events on the format hibernate.<event-name>.<entity-name>
+     */
     private void publishEvent(String eventName, AbstractEvent event, Object entity) {
         StringBuilder fullEventName = new StringBuilder(100);
         fullEventName.append("hibernate.").append(eventName);
-        
+
         if (entity != null) {
             final String entityName = GrailsNameUtils.getPropertyName(entity.getClass());
             fullEventName.append(".").append(entityName);
         }
-            
+
         eventBroker.publish(fullEventName.toString(), event);
     }
-    
+
 }
