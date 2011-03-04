@@ -2,15 +2,15 @@ package grails.plugin.hibernatehijacker.template
 
 import groovy.lang.Closure
 
-import org.hibernate.Session;
+import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionHolder;
+import org.springframework.orm.hibernate3.HibernateCallback
+import org.springframework.orm.hibernate3.HibernateTemplate
+import org.springframework.orm.hibernate3.SessionHolder
 import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionCallback
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate
 
 /**

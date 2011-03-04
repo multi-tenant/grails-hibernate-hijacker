@@ -62,6 +62,10 @@ This plugin publishes intercepted Session instances to a lightweight event broke
             transactionManager = ref("transactionManager")
             sessionFactory = ref("sessionFactory")
         }
+        
+        // Provides a convenient way of updating entity data 
+        // before it's persisted to the database. 
+        hibernateEventPropertyUpdater(HibernateEventPropertyUpdater)
          
     }
     
