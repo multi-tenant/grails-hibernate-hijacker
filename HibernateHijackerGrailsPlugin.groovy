@@ -6,7 +6,7 @@ import grails.plugin.hibernatehijacker.indexdsl.*
 
 class HibernateHijackerGrailsPlugin {
   
-    def version = "0.8"
+    def version = "0.8.1"
 
     def grailsVersion = "1.3.5 > *"
     def dependsOn = [ : ]

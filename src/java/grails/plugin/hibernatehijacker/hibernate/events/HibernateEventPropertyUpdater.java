@@ -1,13 +1,13 @@
 package grails.plugin.hibernatehijacker.hibernate.events;
 
 import grails.plugin.hibernatehijacker.exception.HibernateHijackerException;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.event.AbstractPreDatabaseOperationEvent;
 import org.hibernate.event.PreInsertEvent;
-import org.hibernate.event.PreUpdateEvent;
 import org.hibernate.tuple.StandardProperty;
 import org.hibernate.tuple.entity.EntityMetamodel;
 
@@ -17,56 +17,77 @@ import org.hibernate.tuple.entity.EntityMetamodel;
  */
 public class HibernateEventPropertyUpdater {
 
-    // Mapping key => property index
-    private Map<Integer, Integer> propertyIndexMapping = new HashMap<Integer, Integer>();
+    // Class name => Property index cache
+    private ConcurrentMap<String, EntityPropertyIndexCache> entityIndexCache = new ConcurrentHashMap<String, EntityPropertyIndexCache>();
 
     public void updateProperty(PreInsertEvent event, String propertyName, Object newValue) {
-        int paramIndex = getPropertyIndex(event, propertyName);
-        updateState(event.getState(), paramIndex, newValue);
+        Integer propertyIndex = getPropertyIndexFromCache(event, propertyName);
+        updateState(event.getState(), propertyIndex, newValue);
     }
 
-    public void updateProperty(PreUpdateEvent event, String propertyName, Object newValue) {
-        int paramIndex = getPropertyIndex(event, propertyName);
-        updateState(event.getState(), paramIndex, newValue);
-    }
-
-    protected int getPropertyIndex(AbstractPreDatabaseOperationEvent event, String propertyName) {
-        int mappingKey = createMappingKey(event.getClass(), propertyName);
-        if (!propertyIndexMapping.containsKey(mappingKey)) {
-            updateCacheWithPropertyIndex(event, propertyName, mappingKey);
+    protected Integer getPropertyIndexFromCache(PreInsertEvent event, String propertyName) {
+        String entityClassName = event.getEntity().getClass().getCanonicalName();
+        if (!entityIndexCache.containsKey(entityClassName)) {
+            addEntityIndexesToCache(entityClassName, event);
         }
 
-        return propertyIndexMapping.get(mappingKey);
+        EntityPropertyIndexCache entityPropertyIndexCache = entityIndexCache.get(entityClassName);
+        return entityPropertyIndexCache.getIndex(propertyName);
     }
 
-    protected int createMappingKey(Class<?> entityClass, String propertyName) {
-        HashCodeBuilder keyBuilder = new HashCodeBuilder();
-        keyBuilder.append(entityClass.getCanonicalName()).append(propertyName);
-        return keyBuilder.hashCode();
+    protected synchronized void addEntityIndexesToCache(String entityClassName, PreInsertEvent event) {
+        EntityMetamodel metamodel = event.getPersister().getEntityMetamodel();
+        Map<String, Integer> propertyIndexes = extractPropertyIndexMap(metamodel);
+        EntityPropertyIndexCache propertyIndexCache = new EntityPropertyIndexCache(entityClassName, propertyIndexes);
+        entityIndexCache.put(entityClassName, propertyIndexCache);
     }
 
-    protected void updateCacheWithPropertyIndex(AbstractPreDatabaseOperationEvent event, String propertyName, int mappingKey) {
-        EntityMetamodel metaModel = event.getPersister().getEntityMetamodel();
-        int propertyIndex = getPropertyIndexFromMetaModel(metaModel, propertyName);
-        propertyIndexMapping.put(mappingKey, propertyIndex);
-    }
-
-    protected int getPropertyIndexFromMetaModel(EntityMetamodel metaModel, String propertyName) {
+    protected Map<String, Integer> extractPropertyIndexMap(EntityMetamodel metaModel) {
         int i = 0;
+        Map<String, Integer> propertyIndexes = new HashMap<String, Integer>();
         StandardProperty[] properties = metaModel.getProperties();
         for (StandardProperty property : properties) {
-            if (property.getName().equals(propertyName)) {
-                return i;
-            } else {
-                i++;
-            }
+            String propertyName = property.getName();
+            propertyIndexes.put(propertyName, i++);
         }
 
-        throw new HibernateHijackerException("Unable to find property index for: " + propertyName);
+        return propertyIndexes;
     }
 
     protected void updateState(Object[] state, int propertyIndex, Object newValue) {
         state[propertyIndex] = newValue;
     }
 
+    /**
+     * Contains the index of each property for a given
+     * entity class. This allows us to look up the index
+     * without browsing through a huge object graph.
+     * @author Kim A. Betti
+     */
+    protected class EntityPropertyIndexCache {
+
+        private final String entityClassName;
+        private final ConcurrentMap<String, Integer> propertyIndex = new ConcurrentHashMap<String, Integer>();
+
+        public EntityPropertyIndexCache(String entityClassName, Map<String, Integer> fieldIndexes) {
+            this.entityClassName = entityClassName;
+            propertyIndex.putAll(fieldIndexes);
+        }
+
+        public boolean containsIndex(String propertyName) {
+            return propertyIndex.containsKey(propertyName);
+        }
+
+        public Integer getIndex(String propertyName) {
+            if (propertyIndex.containsKey(propertyName)) {
+                return propertyIndex.get(propertyName);
+            } else {
+                throw new HibernateHijackerException(entityClassName + " does not contain a property named " + propertyName);
+            }
+        }
+
+    }
+
 }
+
+
