@@ -49,7 +49,11 @@ public class HibernateEventSubscriptionFactory implements HibernateConfigPostPro
 
     @Override
     public Class<?> getObjectType() {
-        return eventListener.getClass();
+        if (eventListener == null) {
+            return Object.class;  // during startup, eventListener might not be yet populated
+        } else {
+            return eventListener.getClass();
+        }
     }
 
     @Override
