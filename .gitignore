@@ -1,5 +1,6 @@
 web-app
 target
+target-eclipse
 build
 bin
 build.sh

@@ -24,12 +24,11 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a7', { exclude 'xml-apis' }
+        //test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a7', { exclude 'xml-apis' }
         //runtime 'mysql:mysql-connector-java:5.1.13'
     }
 
     plugins { 
-        compile ":hawk-eventing:0.5.1"
     }
     
 }
