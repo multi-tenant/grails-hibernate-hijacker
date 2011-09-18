@@ -40,20 +40,21 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
     private Class<? extends CurrentSessionContext> currentSessionContextClass = SpringSessionContext.class;
 
     @Override
-    protected SessionFactory buildSessionFactory() throws Exception {
+    public SessionFactory buildSessionFactory() throws Exception {
         setExposeTransactionAwareSessionFactory(false);
         SessionFactory realSessionFactory = super.buildSessionFactory();
         return sessionFactoryProxyFactory.createSessionFactoryProxy(realSessionFactory, currentSessionContextClass);
     }
 
     @Override
-    protected void postProcessConfiguration(final Configuration config) throws HibernateException {
+    protected void postProcessConfiguration() throws HibernateException {
+        Configuration config = getConfiguration();
         for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors) {
             log.debug("Passing Hibernate configuration to: {}", processor.getClass().getSimpleName());
             processor.doPostProcessing(config);
         }
 
-        super.postProcessConfiguration(config);
+        super.postProcessConfiguration();
         addListenersFromMap(config);
     }
 
