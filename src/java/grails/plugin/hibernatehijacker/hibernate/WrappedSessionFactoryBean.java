@@ -39,6 +39,26 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
      */
     private Class<? extends CurrentSessionContext> currentSessionContextClass = SpringSessionContext.class;
 
+    /**
+     * this is used for Grails 2.x / Springframework 3.1.x
+     * @param sessionFactory
+     * @return
+     */
+    @Override
+    public SessionFactory wrapSessionFactoryIfNecessary(SessionFactory sessionFactory) {
+        sessionFactory = super.wrapSessionFactoryIfNecessary(sessionFactory);
+        try {
+            return sessionFactoryProxyFactory.createSessionFactoryProxy(sessionFactory, currentSessionContextClass);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * get called for Grails 1.3.x / Springframework 3.0.x
+     * @return
+     * @throws Exception
+     */
     @Override
     public SessionFactory buildSessionFactory() throws Exception {
         setExposeTransactionAwareSessionFactory(false);
