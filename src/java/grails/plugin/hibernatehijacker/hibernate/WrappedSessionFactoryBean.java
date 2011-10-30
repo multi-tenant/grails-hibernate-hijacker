@@ -67,14 +67,13 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
     }
 
     @Override
-    protected void postProcessConfiguration() throws HibernateException {
-        Configuration config = getConfiguration();
+    protected void postProcessConfiguration(Configuration config) throws HibernateException {
         for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors) {
             log.debug("Passing Hibernate configuration to: {}", processor.getClass().getSimpleName());
             processor.doPostProcessing(config);
         }
 
-        super.postProcessConfiguration();
+        super.postProcessConfiguration(config);
         addListenersFromMap(config);
     }
 
