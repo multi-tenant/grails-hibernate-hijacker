@@ -81,13 +81,9 @@ public class HibernateEventPropertyUpdater {
         public Integer getIndex(String propertyName) {
             if (propertyIndex.containsKey(propertyName)) {
                 return propertyIndex.get(propertyName);
-            } else {
-                throw new HibernateHijackerException(entityClassName + " does not contain a property named " + propertyName);
             }
+
+            throw new HibernateHijackerException(entityClassName + " does not contain a property named " + propertyName);
         }
-
     }
-
 }
-
-
