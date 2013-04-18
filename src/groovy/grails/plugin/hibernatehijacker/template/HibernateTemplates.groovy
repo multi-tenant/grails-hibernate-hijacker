@@ -1,7 +1,5 @@
 package grails.plugin.hibernatehijacker.template
 
-import groovy.lang.Closure
-
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.orm.hibernate3.HibernateCallback
@@ -14,10 +12,10 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate
 
 /**
- * Much of this code is from HibernatePluginSupport (by Graeme Rocher) where 
- * it's attached to all domain classes meta class. I've moved it in here 
+ * Much of this code is from HibernatePluginSupport (by Graeme Rocher) where
+ * it's attached to all domain classes meta class. I've moved it in here
  * so it can be used without knowing about a specific domain class at compile time.
- * 
+ *
  * @see https://github.com/grails/grails-core/blob/master/grails-hibernate/src/main/groovy/org/codehaus/groovy/grails/plugins/orm/hibernate/HibernatePluginSupport.groovy
  * @author Kim A. Betti
  */
@@ -33,7 +31,7 @@ class HibernateTemplates {
     def withTransaction(int propagationBehavior, Closure callback) {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager)
         transactionTemplate.propagationBehavior = propagationBehavior
-        
+
         transactionTemplate.execute({ status ->
             try {
                 callback.call(status)
@@ -43,7 +41,7 @@ class HibernateTemplates {
             }
         } as TransactionCallback)
     }
-    
+
     /**
      * Run a closure in a new session. Taken from HibernatePluginSupport
      * so we can use it without having to know about a domain class at compile time.
@@ -70,5 +68,4 @@ class HibernateTemplates {
            }
        }
    }
-    
 }

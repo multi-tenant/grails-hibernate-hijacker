@@ -1,15 +1,10 @@
 package grails.plugin.hibernatehijacker.demo
 
-import spock.lang.*
-import grails.plugin.spock.*
-import grails.plugins.hawkeventing.*
-
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.hibernate.Session
-import org.hibernate.event.*
+import grails.plugin.spock.IntegrationSpec
+import grails.plugins.hawkeventing.Event
+import grails.plugins.hawkeventing.EventConsumer
 
 /**
- *
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
 class BookSpec extends IntegrationSpec {
@@ -28,8 +23,7 @@ class BookSpec extends IntegrationSpec {
         when: "We make Hibernate create three new sessions"
         3.times { n ->
             Book.withNewSession {
-                new Book(name: "Book $n")
-                        .save(flush: true, failOnError: true)
+                new Book(name: "Book $n").save(flush: true, failOnError: true)
             }
         }
 
@@ -47,11 +41,10 @@ class BookSpec extends IntegrationSpec {
         eventBroker.subscribe("hibernate.flush", eventConsumer)
 
         when: "We insert a new Book"
-        new Book(name: "Groovy in Actoin")
-                .save(flush: true, failOnError: true)
+        new Book(name: "Groovy in Actoin").save(flush: true, failOnError: true)
 
         then: "We've intercepted the events we suspected"
         5 * eventConsumer.consume(_ as Event)
     }
-    
+
 }

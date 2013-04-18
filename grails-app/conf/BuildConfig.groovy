@@ -1,34 +1,29 @@
-grails.project.class.dir = "target/classes"
-grails.project.test.class.dir = "target/test-classes"
-grails.project.test.reports.dir = "target/test-reports"
+grails.project.work.dir = 'target'
 
 grails.project.dependency.resolution = {
 
-    inherits("global") {
-    }
+	inherits 'global'
+	log 'warn'
 
-    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
-    repositories {
+	repositories {
+		grailsCentral()
+	}
 
-        mavenLocal()
-        mavenCentral()
+	plugins {
+		build ':release:2.2.1', ':rest-client-builder:1.0.3', {
+			export = false
+		}
 
-        grailsPlugins()
-        grailsHome()
-        grailsCentral()
+		compile ":hibernate:$grailsVersion", {
+			export = false
+		}
 
-        //mavenRepo "http://snapshots.repository.codehaus.org"
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
-    }
+		compile ':hawk-eventing:0.5.1', {
+			excludes 'svn'
+		}
 
-    dependencies {
-        //test 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.0a7', { exclude 'xml-apis' }
-        //runtime 'mysql:mysql-connector-java:5.1.13'
-    }
-
-    plugins { 
-    }
-    
+		test ':spock:0.7', {
+			export = false
+		}
+	}
 }
