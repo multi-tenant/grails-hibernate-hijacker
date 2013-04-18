@@ -16,7 +16,7 @@ class HibernateHijackerGrailsPlugin {
      * By loading our plugin after webflow (if it's installed) we can detect this
      * and create an instance of FlowAwareCurrentSessionContext instead of SpringSessionContext.
      */
-    def loadAfter = [ 'webflow' ]
+    def loadAfter = ['webflow']
 
     def pluginExcludes = [
         "**/demo/**"
@@ -32,6 +32,11 @@ It is very difficult to intercept new Hibernate sessions in a non-intrusive way.
 Multiple plugins trying to archive this are likely to step on each others feet.
 This plugin publishes intercepted Session instances to a lightweight event broker.
 '''
+
+    def license = "APACHE"
+//    def developers = [[name: "Joe Bloggs", email: "joe@bloggs.net"]]
+    def issueManagement = [system: 'GitHub', url: 'https://github.com/multi-tenant/grails-hibernate-hijacker/issues']
+    def scm = [url: 'https://github.com/multi-tenant/grails-hibernate-hijacker']
 
     def doWithSpring = {
 
