@@ -17,14 +17,16 @@ import org.springframework.core.Ordered;
 /**
  * Replaces the default ConfigurableLocalSessionFactoryBean with WrappedSessionFactoryBean.
  * It will also make sure that our replacement is wired with the required dependencies.
- * 
+ *
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
 public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor, Ordered {
 
+    private String sessionFactoryBean;
+
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        BeanDefinition beanDef = beanFactory.getBeanDefinition("sessionFactory");
+        BeanDefinition beanDef = beanFactory.getBeanDefinition(sessionFactoryBean);
         beanDef.setBeanClassName(WrappedSessionFactoryBean.class.getName());
         setBeanProperties(beanFactory, beanDef);
     }
@@ -35,6 +37,9 @@ public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor, Or
         setHibernateConfigPostProcessors(beanFactory, properties);
     }
 
+    /**
+     * @see WrappedSessionFactoryBean#setSessionFactoryProxyFactory(grails.plugin.hibernatehijacker.hibernate.SessionFactoryProxyFactory)
+     */
     private void setHibernateProxyFactoryReference(MutablePropertyValues properties) {
         RuntimeBeanReference reference = new RuntimeBeanReference("sessionFactoryProxyFactory");
         properties.add("sessionFactoryProxyFactory", reference);
@@ -43,9 +48,8 @@ public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor, Or
     /**
      * Looks up all beans implementing HibernateConfigPostProcessor and makes
      * sure that they're injected into WrappedSessionFactoryBean
-     * 
-     * @param beanFactory
-     * @param properties
+     *
+     * @see WrappedSessionFactoryBean#setHibernateConfigPostProcessors(java.util.List)
      */
     private void setHibernateConfigPostProcessors(ConfigurableListableBeanFactory beanFactory, MutablePropertyValues properties) {
         Collection<HibernateConfigPostProcessor> configPostProcessors = beanFactory.getBeansOfType(HibernateConfigPostProcessor.class).values();
@@ -59,4 +63,7 @@ public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor, Or
         return Ordered.HIGHEST_PRECEDENCE;
     }
 
+    public void setSessionFactoryBean(String sessionFactoryBean) {
+        this.sessionFactoryBean = sessionFactoryBean;
+    }
 }

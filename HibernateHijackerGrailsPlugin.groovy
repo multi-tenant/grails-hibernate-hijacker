@@ -1,3 +1,4 @@
+import grails.plugin.hibernatehijacker.HibernatePluginCustomSupport
 import grails.plugin.hibernatehijacker.hibernate.HibernateEventSubscriptionFactory
 import grails.plugin.hibernatehijacker.hibernate.SessionFactoryProxyFactory
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventListener
@@ -6,9 +7,11 @@ import grails.plugin.hibernatehijacker.indexdsl.IndexDslPostProcessor
 import grails.plugin.hibernatehijacker.spring.SessionFactoryPostProcessor
 import grails.plugin.hibernatehijacker.template.HibernateTemplates
 
+import static org.codehaus.groovy.grails.commons.GrailsDomainClassProperty.DEFAULT_DATA_SOURCE
+
 class HibernateHijackerGrailsPlugin {
 
-    def version = "0.8.1"
+    def version = "0.8.2-SNAPSHOT"
 
     def grailsVersion = "1.3.5 > *"
 
@@ -19,7 +22,7 @@ class HibernateHijackerGrailsPlugin {
     def loadAfter = ['webflow']
 
     def pluginExcludes = [
-        "**/demo/**"
+            "**/demo/**"
     ]
 
     def author = "Kim A. Betti"
@@ -39,6 +42,15 @@ This plugin publishes intercepted Session instances to a lightweight event broke
     def scm = [url: 'https://github.com/multi-tenant/grails-hibernate-hijacker']
 
     def doWithSpring = {
+        String dataSource = application.config.hibernate.hijacker.datasource ?: DEFAULT_DATA_SOURCE
+
+        String transactionManagerBeanName = 'transactionManager'
+        String sessionFactoryBeanName = 'sessionFactory'
+
+        if (dataSource != DEFAULT_DATA_SOURCE) {
+            transactionManagerBeanName += "_$dataSource"
+            sessionFactoryBeanName += "_$dataSource"
+        }
 
         // Responsible for wrapping the real SessionFactory instance
         // inside a JDK proxy so we can intercept new sessions.
@@ -60,16 +72,20 @@ This plugin publishes intercepted Session instances to a lightweight event broke
 
         // Responsible replacing the sessionFactory
         // with our WrappedSessionFactoryBean
-        sessionFactoryPostProcessor(SessionFactoryPostProcessor)
+        sessionFactoryPostProcessor(SessionFactoryPostProcessor) {
+            sessionFactoryBean = sessionFactoryBeanName
+        }
 
         // Implements withTransaction and withNewSession
         hibernateTemplates(HibernateTemplates) {
-            transactionManager = ref("transactionManager")
-            sessionFactory = ref("sessionFactory")
+            transactionManager = ref(transactionManagerBeanName)
+            sessionFactory = ref(sessionFactoryBeanName)
         }
 
         // Provides a convenient way of updating entity data
         // before it's persisted to the database.
         hibernateEventPropertyUpdater(HibernateEventPropertyUpdater)
     }
+
+    def doWithDynamicMethods = HibernatePluginCustomSupport.doWithDynamicMethods
 }
