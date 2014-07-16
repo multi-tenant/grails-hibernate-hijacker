@@ -34,11 +34,14 @@ class HibernatePluginCustomSupport {
             String suffix = beanName - 'sessionFactory'
             enhanceSessionFactory sessionFactory, grailsApplication, ctx, suffix, datastores, source
 
-            if (isProxyClass(sessionFactory.class)) {
-                InvocationHandler handler = getInvocationHandler(sessionFactory)
+            SessionFactory realSessionFactory = sessionFactory
+            while (isProxyClass(realSessionFactory.class)) {
+                InvocationHandler handler = getInvocationHandler(realSessionFactory)
                 if (handler instanceof SessionFactoryInvocationHandler) {
-                    SessionFactory realSessionFactory = handler.realSessionFactory
-                    enhanceSessionFactory realSessionFactory, grailsApplication, ctx, suffix, datastores, source
+                    realSessionFactory = handler.realSessionFactory
+
+                    if (!isProxyClass(realSessionFactory.class))
+                        enhanceSessionFactory realSessionFactory, grailsApplication, ctx, suffix, datastores, source
                 }
             }
         }

@@ -45,4 +45,7 @@ public class SessionFactoryInvocationHandler implements InvocationHandler {
         this.defaultCurrentSessionContext = csc;
     }
 
+	public SessionFactory getRealSessionFactory() {
+		return realSessionFactory;
+	}
 }

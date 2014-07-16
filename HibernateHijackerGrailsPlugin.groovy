@@ -6,6 +6,9 @@ import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventPropertyUp
 import grails.plugin.hibernatehijacker.indexdsl.IndexDslPostProcessor
 import grails.plugin.hibernatehijacker.spring.SessionFactoryPostProcessor
 import grails.plugin.hibernatehijacker.template.HibernateTemplates
+import org.codehaus.groovy.grails.plugins.DefaultGrailsPlugin
+import org.codehaus.groovy.grails.plugins.DefaultGrailsPluginManager
+import org.codehaus.groovy.grails.plugins.GrailsPlugin
 
 import static org.codehaus.groovy.grails.commons.GrailsDomainClassProperty.DEFAULT_DATA_SOURCE
 
@@ -85,7 +88,12 @@ This plugin publishes intercepted Session instances to a lightweight event broke
         // Provides a convenient way of updating entity data
         // before it's persisted to the database.
         hibernateEventPropertyUpdater(HibernateEventPropertyUpdater)
-    }
 
-    def doWithDynamicMethods = HibernatePluginCustomSupport.doWithDynamicMethods
+		//Hacking into hibernate support plugin
+		def ctx = application.parentContext
+		DefaultGrailsPluginManager pluginManager = ctx.getBean('pluginManager') as DefaultGrailsPluginManager
+		DefaultGrailsPlugin hibernatePlugin = pluginManager.getGrailsPlugin('hibernate') as DefaultGrailsPlugin
+
+		hibernatePlugin.pluginBean.setPropertyValue(GrailsPlugin.DO_WITH_DYNAMIC_METHODS, HibernatePluginCustomSupport.doWithDynamicMethods)
+    }
 }
