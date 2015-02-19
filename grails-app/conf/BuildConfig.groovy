@@ -1,4 +1,8 @@
+Map<String, String> ENV = System.getenv();
 grails.project.work.dir = 'target'
+String mvnRepoHost = ENV['MVN_REPO_HOST']
+String mvnRepoUser = ENV['MVN_REPO_USER']
+String mvnRepoPassword = ENV['MVN_REPO_PASSWORD']
 
 grails.project.dependency.resolution = {
 
@@ -14,7 +18,12 @@ grails.project.dependency.resolution = {
 			excludes 'groovy', 'groovy-all'
 		}
 	}
-
+	credentials {
+		realm = ENV['MVN_REPO_REALM']
+		host = mvnRepoHost
+		username = mvnRepoUser
+		password = mvnRepoPassword
+	}
 	plugins {
 		build ':release:2.2.1', ':rest-client-builder:1.0.3', {
 			export = false
@@ -34,3 +43,13 @@ grails.project.dependency.resolution = {
 		}
 	}
 }
+
+grails.project.repos.releases.url = ENV['MVN_REPO_REPOSITORIES_URL_WARS_RELEASE']
+grails.project.repos.releases.username = mvnRepoUser
+grails.project.repos.releases.password = mvnRepoPassword
+
+grails.project.repos.snapshots.url = ENV['MVN_REPO_REPOSITORIES_URL_WARS_SNAPSHOT']
+grails.project.repos.snapshots.username = mvnRepoUser
+grails.project.repos.snapshots.password = mvnRepoPassword
+
+grails.project.repos.default = 'releases'
