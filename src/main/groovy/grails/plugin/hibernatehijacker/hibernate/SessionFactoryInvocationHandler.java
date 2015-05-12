@@ -8,7 +8,8 @@ import org.hibernate.context.CurrentSessionContext;
 
 /**
  * SessionFactory method invocation will be passing through here.
- * @author Kim A. Betti <kim.betti@gmail.com>
+ * @author Kim A. Betti 
+ * email:kim.betti@gmail.com
  */
 public class SessionFactoryInvocationHandler implements InvocationHandler {
 

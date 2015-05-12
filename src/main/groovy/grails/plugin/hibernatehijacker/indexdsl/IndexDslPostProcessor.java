@@ -5,7 +5,7 @@ import groovy.lang.Closure;
 
 import java.util.Iterator;
 
-import org.codehaus.groovy.grails.commons.GrailsClassUtils;
+import grails.util.GrailsClassUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;

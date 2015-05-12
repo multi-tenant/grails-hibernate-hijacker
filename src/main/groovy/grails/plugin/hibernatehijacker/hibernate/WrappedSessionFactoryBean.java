@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean;
-import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners;
+import org.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean;
+import org.grails.orm.hibernate.HibernateEventListeners;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -23,7 +23,7 @@ import org.springframework.orm.hibernate3.SpringSessionContext;
  * Other features like event listeners can be enabled by injecting
  * HibernateConfigurationPostProcessor beans.
  * 
- * @author Kim A. Betti <kim.betti@gmail.com>
+ * @author Kim A. Betti  email:kim.betti@gmail.com
  */
 public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
 
@@ -80,8 +80,8 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
     /**
      * Important: Do not call super!
      * 
-     * @see http://jira.codehaus.org/browse/GRAILS-7211
-     * @see http://jira.codehaus.org/browse/GRAILS-5725
+     * see http://jira.codehaus.org/browse/GRAILS-7211
+     * see http://jira.codehaus.org/browse/GRAILS-5725
      * @param listeners
      */
     @Override

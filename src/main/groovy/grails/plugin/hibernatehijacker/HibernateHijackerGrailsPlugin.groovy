@@ -1,3 +1,4 @@
+package grails.plugin.hibernatehijacker
 import grails.plugin.hibernatehijacker.hibernate.HibernateEventSubscriptionFactory
 import grails.plugin.hibernatehijacker.hibernate.SessionFactoryProxyFactory
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventListener
@@ -5,22 +6,25 @@ import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventPropertyUp
 import grails.plugin.hibernatehijacker.indexdsl.IndexDslPostProcessor
 import grails.plugin.hibernatehijacker.spring.SessionFactoryPostProcessor
 import grails.plugin.hibernatehijacker.template.HibernateTemplates
+import grails.plugins.*
 
-class HibernateHijackerGrailsPlugin {
+class HibernateHijackerGrailsPlugin extends Plugin {
 
-    def version = "0.8.1"
+    // the version or versions of Grails the plugin is designed for
+    def grailsVersion = "3.0.1 > *"
+    // resources that are excluded from plugin packaging
+    def pluginExcludes = [
+        "grails-app/views/error.gsp",
+		"**/demo/**"
+    ]
 
-    def grailsVersion = "1.3.5 > *"
-
+    
     /* The webflow plugin replaces SpringSessionContext.
      * By loading our plugin after webflow (if it's installed) we can detect this
      * and create an instance of FlowAwareCurrentSessionContext instead of SpringSessionContext.
      */
     def loadAfter = ['webflow']
 
-    def pluginExcludes = [
-        "**/demo/**"
-    ]
 
     def author = "Kim A. Betti"
     def authorEmail = "kim.betti@gmail.com"

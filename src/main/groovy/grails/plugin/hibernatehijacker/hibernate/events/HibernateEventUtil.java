@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Deals with all the painful things involved with adding Hibernate event listeners.
- * @see http://www.docjar.com/html/api/org/hibernate/event/EventListeners.java.html
+ * see http://www.docjar.com/html/api/org/hibernate/event/EventListeners.java.html
  * @author Kim A. Betti
  */
 public class HibernateEventUtil {
@@ -22,9 +22,8 @@ public class HibernateEventUtil {
     /**
      * Finds all *EventListener interfaces registered with the class
      * and adds them as listeners.
-     * @param configuration
+     * @param eventListeners
      * @param listener
-     * @throws Exception
      */
     public static void addListener(EventListeners eventListeners, Object listener) {
         log.debug("Adding event listeners from: {} ", listener);

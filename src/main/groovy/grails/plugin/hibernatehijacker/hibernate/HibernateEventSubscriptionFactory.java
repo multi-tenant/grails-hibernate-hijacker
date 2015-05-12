@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Required;
  * doWithSpring = {
  * 
  *     tenantHibernateEventListener(HibernateEventSubscriptionFactory) {
- *          eventListener = { TenantHibernateEventListener listener ->
+ *          eventListener = { TenantHibernateEventListener listener -
  *              currentTenant = ref("currentTenant")
  *          }
  *      }
@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Required;
  * </pre>
  * 
  * @author Kim A. Betti
+ * email:kim.betti@gmail.com
  */
 public class HibernateEventSubscriptionFactory implements HibernateConfigPostProcessor, FactoryBean<Object> {
 

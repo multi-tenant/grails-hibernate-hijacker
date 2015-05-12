@@ -14,7 +14,7 @@ public interface HibernateConfigPostProcessor {
     /**
      * Implement this method to manipulate the Hibernate Configuration.
      * @param configuration Hibernate configuration
-     * @throws HibernateException
+     * throws HibernateException: hibernate exception
      */
     void doPostProcessing(final Configuration configuration) throws HibernateException;
 

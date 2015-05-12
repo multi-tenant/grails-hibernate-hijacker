@@ -18,7 +18,7 @@ import org.springframework.core.Ordered;
  * Replaces the default ConfigurableLocalSessionFactoryBean with WrappedSessionFactoryBean.
  * It will also make sure that our replacement is wired with the required dependencies.
  * 
- * @author Kim A. Betti <kim.betti@gmail.com>
+ * @author Kim A. Betti  @email:kim.betti@gmail.com
  */
 public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor, Ordered {
 

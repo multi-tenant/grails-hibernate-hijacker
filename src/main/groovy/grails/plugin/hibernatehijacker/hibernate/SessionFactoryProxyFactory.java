@@ -20,7 +20,8 @@ import org.hibernate.impl.SessionFactoryImpl;
  * and return our instance. This way we don't run into the annoying
  * "no session bound to thread" problem.
  * 
- * @author Kim A. Betti <kim.betti@gmail.com>
+ * @author Kim A. Betti
+ * email:kim.betti@gmail.com
  */
 public class SessionFactoryProxyFactory {
 
