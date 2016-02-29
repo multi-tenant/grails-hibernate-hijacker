@@ -6,12 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean;
+//import org.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean;
+import org.grails.orm.hibernate.HibernateMappingContextSessionFactoryBean;
 import org.grails.orm.hibernate.HibernateEventListeners;
+//import org.hibernate.event.EventListeners;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+//import org.grails.orm.hibernate.HibernateMappingContextConfiguration;
 import org.hibernate.context.CurrentSessionContext;
+//import org.hibernate.context.spi.CurrentSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.SpringSessionContext;
@@ -23,9 +27,9 @@ import org.springframework.orm.hibernate3.SpringSessionContext;
  * Other features like event listeners can be enabled by injecting
  * HibernateConfigurationPostProcessor beans.
  * 
- * @author Kim A. Betti  email:kim.betti@gmail.com
+ * @author Kim A. Betti kim.betti@gmail.com
  */
-public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
+public class WrappedSessionFactoryBean extends HibernateMappingContextSessionFactoryBean {
 
     private static final Logger log = LoggerFactory.getLogger(WrappedSessionFactoryBean.class);
 
@@ -41,8 +45,7 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
 
     /**
      * this is used for Grails 2.x / Springframework 3.1.x
-     * @param sessionFactory
-     * @return
+     * @param sessionFactory: session
      */
     @Override
     public SessionFactory wrapSessionFactoryIfNecessary(SessionFactory sessionFactory) {
@@ -56,8 +59,7 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
 
     /**
      * get called for Grails 1.3.x / Springframework 3.0.x
-     * @return
-     * @throws Exception
+     
      */
     @Override
     public SessionFactory buildSessionFactory() throws Exception {
@@ -82,11 +84,12 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
      * 
      * see http://jira.codehaus.org/browse/GRAILS-7211
      * see http://jira.codehaus.org/browse/GRAILS-5725
-     * @param listeners
+     * @param listeners: listeners
      */
     @Override
     public void setHibernateEventListeners(final HibernateEventListeners listeners) {
         if (listeners != null) {
+            
             this.listenerMap = listeners.getListenerMap();
         }
     }
@@ -106,6 +109,7 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
      * 
      * By listening in on this we're able to support plugins like webflow
      * without introducing a compile time dependency.
+     * @param currentSessionContextClass:current session
      */
     @Override
     @SuppressWarnings("unchecked")

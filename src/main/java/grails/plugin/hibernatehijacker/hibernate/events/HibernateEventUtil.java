@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.cfg.Configuration;
+//import org.grails.orm.hibernate.HibernateMappingContextSessionFactoryBean;
+//import org.hibernate.event.EventListeners;
+//import org.grails.orm.hibernate.HibernateEventListeners;
 import org.hibernate.event.EventListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +25,8 @@ public class HibernateEventUtil {
     /**
      * Finds all *EventListener interfaces registered with the class
      * and adds them as listeners.
-     * @param eventListeners
-     * @param listener
+     * @param eventListeners: listeners
+     * @param listener: listener
      */
     public static void addListener(EventListeners eventListeners, Object listener) {
         log.debug("Adding event listeners from: {} ", listener);
@@ -77,6 +80,7 @@ public class HibernateEventUtil {
 
     public static void addListener(Configuration configuration, String type, Object listener) {
         log.debug("Adding listener for {}: {}", type, listener);
+        
         EventListeners listeners = configuration.getEventListeners();
         Class<?> listenerClass = listeners.getListenerClassFor(type);
         addListener(configuration, type, listenerClass, listener);

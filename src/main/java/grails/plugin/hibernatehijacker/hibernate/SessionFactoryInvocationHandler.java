@@ -5,11 +5,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import org.hibernate.SessionFactory;
 import org.hibernate.context.CurrentSessionContext;
+//import org.hibernate.context.spi.CurrentSessionContext;
 
 /**
  * SessionFactory method invocation will be passing through here.
- * @author Kim A. Betti 
- * email:kim.betti@gmail.com
+ * @author Kim A. Betti kim.betti@gmail.com
  */
 public class SessionFactoryInvocationHandler implements InvocationHandler {
 

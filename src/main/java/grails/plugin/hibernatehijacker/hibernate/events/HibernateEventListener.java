@@ -5,9 +5,14 @@ import grails.util.GrailsNameUtils;
 
 import java.util.Map;
 import java.util.Set;
+import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent;
+import org.grails.datastore.mapping.engine.event.AbstractPersistenceEventListener;
+import org.grails.datastore.mapping.engine.event.PersistenceEventListener;
 
 import org.hibernate.HibernateException;
 import org.hibernate.event.*;
+import org.hibernate.persister.entity.EntityPersister;
+import org.springframework.context.ApplicationEvent;
 
 /**
  * Brute force approach.
@@ -18,7 +23,7 @@ import org.hibernate.event.*;
  * @author Kim A. Betti
  */
 @SuppressWarnings("serial")
-public class HibernateEventListener implements AutoFlushEventListener, DeleteEventListener, DirtyCheckEventListener,
+public class HibernateEventListener  implements PersistenceEventListener, AutoFlushEventListener, DeleteEventListener, DirtyCheckEventListener,
 EvictEventListener, FlushEventListener, FlushEntityEventListener, LoadEventListener,
 InitializeCollectionEventListener, LockEventListener, MergeEventListener, PersistEventListener,
 PostDeleteEventListener, PostInsertEventListener, PostLoadEventListener, PostUpdateEventListener,
@@ -187,5 +192,29 @@ RefreshEventListener, ReplicateEventListener, SaveOrUpdateEventListener {
 
         eventBroker.publish(fullEventName.toString(), event);
     }
+
+    
+
+    @Override
+    public boolean supportsEventType(Class<? extends ApplicationEvent> type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean supportsSourceType(Class<?> type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrder() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+  
 
 }

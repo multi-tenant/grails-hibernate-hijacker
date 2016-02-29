@@ -6,9 +6,13 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 import org.hibernate.SessionFactory;
+//import org.hibernate.context.CurrentSessionContext;
 import org.hibernate.context.CurrentSessionContext;
 import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.impl.SessionFactoryImpl;
+//import org.hibernate.engine.SessionFactoryImplementor;
+
+//import org.hibernate.SessionFactoryImpl;
+import org.grails.orm.hibernate.SessionFactoryProxy;
 
 /**
  * This class will create a proxy for Hibernate's session factory.
@@ -20,8 +24,7 @@ import org.hibernate.impl.SessionFactoryImpl;
  * and return our instance. This way we don't run into the annoying
  * "no session bound to thread" problem.
  * 
- * @author Kim A. Betti
- * email:kim.betti@gmail.com
+ * @author Kim A. Betti kim.betti@gmail.com
  */
 public class SessionFactoryProxyFactory {
 
@@ -39,7 +42,7 @@ public class SessionFactoryProxyFactory {
     }
 
     private SessionFactoryImplementor createSessionFactoryProxy(InvocationHandler handler) {
-        Class<?>[] interfaces = SessionFactoryImpl.class.getInterfaces();
+        Class<?>[] interfaces = SessionFactoryProxy.class.getInterfaces();
         ClassLoader classloader = SessionFactory.class.getClassLoader();
         return (SessionFactoryImplementor) Proxy.newProxyInstance(classloader, interfaces, handler);
     }

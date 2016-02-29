@@ -1,11 +1,13 @@
 package grails.plugin.hibernatehijacker.indexdsl;
 
 import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor;
+import grails.plugin.hibernatehijacker.indexdsl.HibernateIndexBuilder;
 import groovy.lang.Closure;
 
 import java.util.Iterator;
 
 import grails.util.GrailsClassUtils;
+import org.grails.orm.hibernate.HibernateMappingContextSessionFactoryBean;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
@@ -24,8 +26,8 @@ public class IndexDslPostProcessor implements HibernateConfigPostProcessor {
 
     private static Logger log = LoggerFactory.getLogger(IndexDslPostProcessor.class);
 
-    @Override
     @SuppressWarnings("unchecked")
+    @Override
     public void doPostProcessing(Configuration configuration) throws HibernateException {
         Iterator<PersistentClass> mappingIterator = configuration.getClassMappings();
         while (mappingIterator.hasNext()) {
@@ -53,5 +55,7 @@ public class IndexDslPostProcessor implements HibernateConfigPostProcessor {
     protected Closure getIndexClosure(Class<?> domainClass) {
         return (Closure) GrailsClassUtils.getStaticPropertyValue(domainClass, "indexes");
     }
+
+   
 
 }

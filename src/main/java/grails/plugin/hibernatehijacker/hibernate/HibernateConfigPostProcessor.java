@@ -2,6 +2,7 @@ package grails.plugin.hibernatehijacker.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
+//import org.grails.orm.hibernate.HibernateMappingContextSessionFactoryBean;
 
 /**
  * Spring beans implementing this interface will be able to participate
@@ -14,7 +15,7 @@ public interface HibernateConfigPostProcessor {
     /**
      * Implement this method to manipulate the Hibernate Configuration.
      * @param configuration Hibernate configuration
-     * throws HibernateException: hibernate exception
+     
      */
     void doPostProcessing(final Configuration configuration) throws HibernateException;
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+//import org.hibernate.tuple.NonIdentifierAttribute;
 import org.hibernate.event.PreInsertEvent;
 import org.hibernate.tuple.StandardProperty;
 import org.hibernate.tuple.entity.EntityMetamodel;
@@ -45,7 +46,7 @@ public class HibernateEventPropertyUpdater {
     protected Map<String, Integer> extractPropertyIndexMap(EntityMetamodel metaModel) {
         int i = 0;
         Map<String, Integer> propertyIndexes = new HashMap<String, Integer>();
-        StandardProperty[] properties = metaModel.getProperties();
+        StandardProperty[] properties = (StandardProperty[]) metaModel.getProperties();
         for (StandardProperty property : properties) {
             String propertyName = property.getName();
             propertyIndexes.put(propertyName, i++);

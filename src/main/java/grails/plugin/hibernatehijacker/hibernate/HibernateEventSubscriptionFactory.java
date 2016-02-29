@@ -3,6 +3,9 @@ package grails.plugin.hibernatehijacker.hibernate;
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventUtil;
 
 import org.hibernate.HibernateException;
+//import org.hibernate.cfg.Configuration;
+import org.grails.orm.hibernate.HibernateMappingContextSessionFactoryBean;
+import org.grails.orm.hibernate.HibernateEventListeners;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.event.EventListeners;
 import org.slf4j.Logger;
@@ -19,7 +22,7 @@ import org.springframework.beans.factory.annotation.Required;
  * doWithSpring = {
  * 
  *     tenantHibernateEventListener(HibernateEventSubscriptionFactory) {
- *          eventListener = { TenantHibernateEventListener listener -
+ *          eventListener = { TenantHibernateEventListener listener
  *              currentTenant = ref("currentTenant")
  *          }
  *      }
@@ -28,7 +31,6 @@ import org.springframework.beans.factory.annotation.Required;
  * </pre>
  * 
  * @author Kim A. Betti
- * email:kim.betti@gmail.com
  */
 public class HibernateEventSubscriptionFactory implements HibernateConfigPostProcessor, FactoryBean<Object> {
 
@@ -41,6 +43,7 @@ public class HibernateEventSubscriptionFactory implements HibernateConfigPostPro
         log.info("Registering Hibernate event listener {}", eventListener.getClass().getName());
         EventListeners eventListeners = configuration.getEventListeners();
         HibernateEventUtil.addListener(eventListeners, eventListener);
+        
     }
 
     @Override
@@ -66,5 +69,11 @@ public class HibernateEventSubscriptionFactory implements HibernateConfigPostPro
     public void setEventListener(Object eventListener) {
         this.eventListener = eventListener;
     }
+
+   
+
+    
+
+   
 
 }
