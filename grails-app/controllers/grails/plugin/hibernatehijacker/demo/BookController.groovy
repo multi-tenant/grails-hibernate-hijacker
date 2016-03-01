@@ -1,5 +1,5 @@
 package grails.plugin.hibernatehijacker.demo
 
 class BookController {
-    static scaffold = true
+    static scaffold = Book
 }
