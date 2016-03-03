@@ -5,14 +5,15 @@ import org.hibernate.event.PostUpdateEvent
 import org.hibernate.event.PostUpdateEventListener
 import org.hibernate.event.PreUpdateEvent
 import org.hibernate.event.PreUpdateEventListener
+import spock.lang.Specification
+
 import org.hibernate.cfg.Configuration
 
-import grails.plugin.spock.UnitSpec
 
 /**
  * @author Kim A. Betti
  */
-class HibernateEventUtilSpec extends UnitSpec {
+class HibernateEventUtilSpec extends Specification {
 
     def "add event listeners from object"() {
         given:

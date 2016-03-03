@@ -1,14 +1,14 @@
 package grails.plugin.hibernatehijacker.template
 
 import grails.plugin.hibernatehijacker.demo.Book
-import grails.plugin.spock.IntegrationSpec
 
 import org.hibernate.SessionFactory
+import spock.lang.Specification
 
 /**
  * @author Kim A. Betti
  */
-class HibernateTemplatesSpec extends IntegrationSpec {
+class HibernateTemplatesSpec extends Specification {
 
     HibernateTemplates hibernateTemplates
     SessionFactory sessionFactory

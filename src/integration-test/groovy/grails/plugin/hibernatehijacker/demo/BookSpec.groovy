@@ -1,13 +1,14 @@
 package grails.plugin.hibernatehijacker.demo
 
-import grails.plugin.spock.IntegrationSpec
+
 import grails.plugins.hawkeventing.Event
 import grails.plugins.hawkeventing.EventConsumer
+import spock.lang.Specification
 
 /**
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
-class BookSpec extends IntegrationSpec {
+class BookSpec extends Specification {
 
     def eventBroker
 

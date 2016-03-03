@@ -2,24 +2,25 @@ package grails.plugin.hibernatehijacker.demo
 
 import geb.*
 import geb.spock.GebSpec
+import grails.core.GrailsApplication
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import grails.plugins.hawkeventing.*
 import org.hibernate.Session
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import grails.util.Holders
 
 class BookFunctionalSpec extends GebSpec {
 
     String baseUrl = "http://localhost:8080"
 
     WebDriver createDriver() {
-        new HtmlUnitDriver()
+//        new HtmlUnitDriver()
     }
 
     def "Book can be persisted"() {
 
         given: "A subscription to new Hibernate sessions"
-		def eventBroker = ApplicationHolder.application.mainContext.getBean("eventBroker") // DI not working with geb?
+        
+        def eventBroker = Holders.findApplication().getArtefacts("eventBroker") // DI not working with geb?
         def sessionConsumer = Mock(EventConsumer)
         eventBroker.subscribe("hibernate.sessionCreated", sessionConsumer)
 

@@ -1,5 +1,6 @@
 package hibernatehijacker
 
+import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventListener
 import grails.plugins.*
 
 class HibernateHijackerGrailsPlugin extends Plugin {
@@ -12,12 +13,16 @@ class HibernateHijackerGrailsPlugin extends Plugin {
     ]
 
     // TODO Fill in these fields
-    def title = "Hibernate Hijacker" // Headline display name of the plugin
-    def author = "Your name"
-    def authorEmail = ""
-    def description = '''\
-Brief summary/description of the plugin.
-'''
+     def author = "Kim A. Betti"
+    def authorEmail = "kim.betti@gmail.com"
+    def title = "Hibernate Hijacker"
+   
+    def description = """
+This plugin is a part of the re-engineering efforts going into the Multi-Tenant plugin.
+It is very difficult to intercept new Hibernate sessions in a non-intrusive way.
+Multiple plugins trying to archive this are likely to step on each others feet.
+This plugin publishes intercepted Session instances to a lightweight event broker.
+"""
     def profiles = ['web']
 
     // URL to the plugin's documentation
@@ -26,7 +31,10 @@ Brief summary/description of the plugin.
     // Extra (optional) plugin metadata
 
     // License: one of 'APACHE', 'GPL2', 'GPL3'
-//    def license = "APACHE"
+def license = "APACHE"
+//    def developers = [[name: "Joe Bloggs", email: "joe@bloggs.net"]]
+    def issueManagement = [system: 'GitHub', url: 'https://github.com/multi-tenant/grails-hibernate-hijacker/issues']
+    def scm = [url: 'https://github.com/multi-tenant/grails-hibernate-hijacker']
 
     // Details of company behind the plugin (if there is one)
 //    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
@@ -42,6 +50,37 @@ Brief summary/description of the plugin.
 
     Closure doWithSpring() { {->
             // TODO Implement runtime spring config (optional)
+            // Responsible for wrapping the real SessionFactory instance
+        // inside a JDK proxy so we can intercept new sessions.
+        sessionFactoryProxyFactory(SessionFactoryProxyFactory) {
+            eventBroker = ref("eventBroker")
+        }
+
+        // Register the Hibernate event listener responsible for proxying
+        // Hibernate events to more accessible Hawk events.
+        hibernateEventListener(HibernateEventSubscriptionFactory) {
+            eventListener = { HibernateEventListener listener ->
+                eventBroker = ref("eventBroker")
+            }
+        }
+
+        // Reads composite database indexes from domain
+        // classes with a static indexes property
+        indexDslConfigurator(IndexDslPostProcessor)
+
+        // Responsible replacing the sessionFactory
+        // with our WrappedSessionFactoryBean
+        sessionFactoryPostProcessor(SessionFactoryPostProcessor)
+
+        // Implements withTransaction and withNewSession
+        hibernateTemplates(HibernateTemplates) {
+            transactionManager = ref("transactionManager")
+            sessionFactory = ref("sessionFactory")
+        }
+
+        // Provides a convenient way of updating entity data
+        // before it's persisted to the database.
+        hibernateEventPropertyUpdater(HibernateEventPropertyUpdater)
         }
     }
 

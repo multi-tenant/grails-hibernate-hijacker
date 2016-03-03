@@ -3,9 +3,6 @@ package grails.plugin.hibernatehijacker.hibernate;
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventUtil;
 
 import org.hibernate.HibernateException;
-//import org.hibernate.cfg.Configuration;
-import org.grails.orm.hibernate.HibernateMappingContextSessionFactoryBean;
-import org.grails.orm.hibernate.HibernateEventListeners;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.event.EventListeners;
 import org.slf4j.Logger;
@@ -43,7 +40,6 @@ public class HibernateEventSubscriptionFactory implements HibernateConfigPostPro
         log.info("Registering Hibernate event listener {}", eventListener.getClass().getName());
         EventListeners eventListeners = configuration.getEventListeners();
         HibernateEventUtil.addListener(eventListeners, eventListener);
-        
     }
 
     @Override
@@ -69,11 +65,5 @@ public class HibernateEventSubscriptionFactory implements HibernateConfigPostPro
     public void setEventListener(Object eventListener) {
         this.eventListener = eventListener;
     }
-
-   
-
-    
-
-   
 
 }

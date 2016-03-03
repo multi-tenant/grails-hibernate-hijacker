@@ -37,6 +37,7 @@ public class HibernateEventPropertyUpdater {
     }
 
     protected synchronized void addEntityIndexesToCache(String entityClassName, PreInsertEvent event) {
+        
         EntityMetamodel metamodel = event.getPersister().getEntityMetamodel();
         Map<String, Integer> propertyIndexes = extractPropertyIndexMap(metamodel);
         EntityPropertyIndexCache propertyIndexCache = new EntityPropertyIndexCache(entityClassName, propertyIndexes);
