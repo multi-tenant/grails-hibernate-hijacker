@@ -2,9 +2,6 @@ package grails.plugin.hibernatehijacker.indexdsl;
 
 import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor;
 import groovy.lang.Closure;
-
-import java.util.Iterator;
-
 import org.codehaus.groovy.grails.commons.GrailsClassUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Configuration;
@@ -13,12 +10,14 @@ import org.hibernate.mapping.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
+
 /**
  * Configures Hibernate indexes for domain classes
  * with a static indexes property.
- * 
- * @see HibernateIndexBuilder
+ *
  * @author Kim A. Betti
+ * @see HibernateIndexBuilder
  */
 public class IndexDslPostProcessor implements HibernateConfigPostProcessor {
 
@@ -36,7 +35,7 @@ public class IndexDslPostProcessor implements HibernateConfigPostProcessor {
         }
     }
 
-    protected void addIndexesFrom(PersistentClass persistentClass) {
+    private void addIndexesFrom(PersistentClass persistentClass) {
         log.info("Reading indexes from " + persistentClass.getClassName());
 
         Table table = persistentClass.getTable();
@@ -44,13 +43,13 @@ public class IndexDslPostProcessor implements HibernateConfigPostProcessor {
         HibernateIndexBuilder.from(table, indexClosure);
     }
 
-    protected boolean hasIndexClosure(PersistentClass persistentClass) {
+    private boolean hasIndexClosure(PersistentClass persistentClass) {
         Class<?> domainClass = persistentClass.getMappedClass();
         Closure indexes = getIndexClosure(domainClass);
         return indexes != null;
     }
 
-    protected Closure getIndexClosure(Class<?> domainClass) {
+    private Closure getIndexClosure(Class<?> domainClass) {
         return (Closure) GrailsClassUtils.getStaticPropertyValue(domainClass, "indexes");
     }
 

@@ -1,16 +1,15 @@
 package grails.plugin.hibernatehijacker.indexdsl
 
 import grails.plugin.hibernatehijacker.exception.HibernateHijackerException
-import grails.plugin.spock.UnitSpec
-
 import org.hibernate.mapping.Column
 import org.hibernate.mapping.Index
 import org.hibernate.mapping.Table
+import spock.lang.Specification
 
 /**
  * @author Kim A. Betti
  */
-class HibernateIndexBuilderSpec extends UnitSpec {
+class HibernateIndexBuilderSpec extends Specification {
 
     Table table
 

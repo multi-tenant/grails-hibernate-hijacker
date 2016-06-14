@@ -1,46 +1,43 @@
 package grails.plugin.hibernatehijacker.hibernate;
 
 import grails.plugins.hawkeventing.EventBroker;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-
+import org.codehaus.groovy.grails.orm.hibernate.GrailsSessionContext;
 import org.hibernate.SessionFactory;
-import org.hibernate.context.CurrentSessionContext;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.impl.SessionFactoryImpl;
+import org.hibernate.context.spi.CurrentSessionContext;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.internal.SessionFactoryImpl;
+import org.springframework.beans.BeanUtils;
+
+import java.lang.reflect.Constructor;
 
 /**
  * This class will create a proxy for Hibernate's session factory.
- * 
+ * <p>
  * Important:
  * ----------------
  * This class will create a new instance of CurrentSessionContext.
  * SessionFactoryInovactionHandler will intercept calls to getCurrentSession
  * and return our instance. This way we don't run into the annoying
  * "no session bound to thread" problem.
- * 
+ *
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
 public class SessionFactoryProxyFactory {
 
     private EventBroker eventBroker;
 
-    public SessionFactory createSessionFactoryProxy(final SessionFactory realSessionFactory,
-            Class<? extends CurrentSessionContext> currentSessionContextClass) throws Exception {
+    SessionFactory createSessionFactoryProxy(final SessionFactory realSessionFactory,
+                                             Class<? extends CurrentSessionContext> currentSessionContextClass) throws Exception {
 
-        SessionFactoryInvocationHandler handler = new SessionFactoryInvocationHandler(realSessionFactory, eventBroker);
-        SessionFactoryImplementor sessionFactoryProxy = createSessionFactoryProxy(handler);
+        SessionFactoryProxy sessionFactoryProxy = createSessionFactoryProxy(realSessionFactory);
         CurrentSessionContext defaultContext = createCurrentSessionContextInstance(sessionFactoryProxy, currentSessionContextClass);
-        handler.setDefaultCurrentSessionContext(defaultContext);
+        sessionFactoryProxy.setDefaultCurrentSessionContext(defaultContext);
 
         return sessionFactoryProxy;
     }
 
-    private SessionFactoryImplementor createSessionFactoryProxy(InvocationHandler handler) {
-        Class<?>[] interfaces = SessionFactoryImpl.class.getInterfaces();
-        ClassLoader classloader = SessionFactory.class.getClassLoader();
-        return (SessionFactoryImplementor) Proxy.newProxyInstance(classloader, interfaces, handler);
+    private SessionFactoryProxy createSessionFactoryProxy(final SessionFactory realSessionFactory) {
+        return new grails.plugin.hibernatehijacker.hibernate.SessionFactoryProxy(eventBroker, (SessionFactoryImpl) realSessionFactory);
     }
 
     /**
@@ -49,10 +46,20 @@ public class SessionFactoryProxyFactory {
      * By creating this instance ourself we can make sure to it a reference to the proxy instead.
      */
     private CurrentSessionContext createCurrentSessionContextInstance(SessionFactoryImplementor sessionFactoryProxy,
-            Class<? extends CurrentSessionContext> currentSessionContextClass) throws Exception {
+                                                                      Class<? extends CurrentSessionContext> currentSessionContextClass) throws Exception {
+        CurrentSessionContext context;
 
-        return currentSessionContextClass.getConstructor(SessionFactoryImplementor.class)
-        .newInstance(sessionFactoryProxy);
+        if (currentSessionContextClass == null) {
+            currentSessionContextClass = GrailsSessionContext.class;
+        }
+        try {
+            Constructor<? extends CurrentSessionContext> constructor = currentSessionContextClass.getConstructor(SessionFactoryImplementor.class);
+            context = BeanUtils.instantiateClass(constructor, sessionFactoryProxy);
+        } catch (NoSuchMethodException e) {
+            context = new GrailsSessionContext(sessionFactoryProxy);
+        }
+
+        return context;
     }
 
     public void setEventBroker(EventBroker eventBroker) {

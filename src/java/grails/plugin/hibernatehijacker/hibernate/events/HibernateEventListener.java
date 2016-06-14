@@ -2,28 +2,28 @@ package grails.plugin.hibernatehijacker.hibernate.events;
 
 import grails.plugins.hawkeventing.EventBroker;
 import grails.util.GrailsNameUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.event.spi.*;
+import org.hibernate.persister.entity.EntityPersister;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.HibernateException;
-import org.hibernate.event.*;
-
 /**
  * Brute force approach.
- * 
+ * <p>
  * This could probably be implemented in a more dynamic
  * fashion using Groovy, but with more overhead.
- * 
+ *
  * @author Kim A. Betti
  */
 @SuppressWarnings("serial")
 public class HibernateEventListener implements AutoFlushEventListener, DeleteEventListener, DirtyCheckEventListener,
-EvictEventListener, FlushEventListener, FlushEntityEventListener, LoadEventListener,
-InitializeCollectionEventListener, LockEventListener, MergeEventListener, PersistEventListener,
-PostDeleteEventListener, PostInsertEventListener, PostLoadEventListener, PostUpdateEventListener,
-PreDeleteEventListener, PreInsertEventListener, PreLoadEventListener, PreUpdateEventListener,
-RefreshEventListener, ReplicateEventListener, SaveOrUpdateEventListener {
+        EvictEventListener, FlushEventListener, FlushEntityEventListener, LoadEventListener,
+        InitializeCollectionEventListener, LockEventListener, MergeEventListener, PersistEventListener,
+        PostDeleteEventListener, PostInsertEventListener, PostLoadEventListener, PostUpdateEventListener,
+        PreDeleteEventListener, PreInsertEventListener, PreLoadEventListener, PreUpdateEventListener,
+        RefreshEventListener, ReplicateEventListener, SaveOrUpdateEventListener {
 
 
     private EventBroker eventBroker;
@@ -94,6 +94,11 @@ RefreshEventListener, ReplicateEventListener, SaveOrUpdateEventListener {
     @Override
     public void onPostDelete(PostDeleteEvent event) {
         publishEvent("postDelete", event, event.getEntity());
+    }
+
+    @Override
+    public boolean requiresPostCommitHanding(EntityPersister entityPersister) {
+        return false;
     }
 
     @Override

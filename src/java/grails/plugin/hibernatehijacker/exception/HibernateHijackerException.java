@@ -1,7 +1,6 @@
 package grails.plugin.hibernatehijacker.exception;
 
 /**
- * 
  * @author Kim A. Betti
  */
 @SuppressWarnings("serial")

@@ -1,31 +1,26 @@
-import grails.plugin.hibernatehijacker.hibernate.HibernateEventSubscriptionFactory
 import grails.plugin.hibernatehijacker.hibernate.SessionFactoryProxyFactory
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventListener
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventPropertyUpdater
 import grails.plugin.hibernatehijacker.indexdsl.IndexDslPostProcessor
+import grails.plugin.hibernatehijacker.spring.HibernateEventSubscriptionFactory
 import grails.plugin.hibernatehijacker.spring.SessionFactoryPostProcessor
 import grails.plugin.hibernatehijacker.template.HibernateTemplates
 
 class HibernateHijackerGrailsPlugin {
-
-    def version = "0.8.1"
-
-    def grailsVersion = "1.3.5 > *"
-
-    /* The webflow plugin replaces SpringSessionContext.
-     * By loading our plugin after webflow (if it's installed) we can detect this
-     * and create an instance of FlowAwareCurrentSessionContext instead of SpringSessionContext.
-     */
-    def loadAfter = ['webflow']
-
+    // the plugin version
+    def version = "1.0"
+    // the version or versions of Grails the plugin is designed for
+    def grailsVersion = "2.4 > *"
+    // resources that are excluded from plugin packaging
     def pluginExcludes = [
-        "**/demo/**"
+            "grails-app/views/error.gsp",
+            "**/demo/**"
     ]
 
-    def author = "Kim A. Betti"
-    def authorEmail = "kim.betti@gmail.com"
-    def title = "Hibernate Hijacker"
-    def documentation = "http://grails.org/plugin/hibernate-hijacker"
+    // TODO Fill in these fields
+    def title = "Hibernate Hijacker" // Headline display name of the plugin
+    def author = "Sandeep Poonia"
+    def authorEmail = "sandeep.poonia.90@gmail.com"
     def description = '''\
 This plugin is a part of the re-engineering efforts going into the Multi-Tenant plugin.
 It is very difficult to intercept new Hibernate sessions in a non-intrusive way.
@@ -33,13 +28,31 @@ Multiple plugins trying to archive this are likely to step on each others feet.
 This plugin publishes intercepted Session instances to a lightweight event broker.
 '''
 
+    // URL to the plugin's documentation
+    def documentation = "https://github.com/spoonia/grails-hibernate-hijacker"
+
+    // Extra (optional) plugin metadata
+
+    // License: one of 'APACHE', 'GPL2', 'GPL3'
     def license = "APACHE"
-//    def developers = [[name: "Joe Bloggs", email: "joe@bloggs.net"]]
-    def issueManagement = [system: 'GitHub', url: 'https://github.com/multi-tenant/grails-hibernate-hijacker/issues']
-    def scm = [url: 'https://github.com/multi-tenant/grails-hibernate-hijacker']
+
+    // Details of company behind the plugin (if there is one)
+//    def organization = [ name: "My Company", url: "http://www.my-company.com/" ]
+
+    // Any additional developers beyond the author specified above.
+//    def developers = [ [ name: "Joe Bloggs", email: "joe@bloggs.net" ]]
+
+    // Location of the plugin's issue tracker.
+    def issueManagement = [system: 'GitHub', url: 'https://github.com/spoonia/grails-hibernate-hijacker/issues']
+
+    // Online location of the plugin's browseable source code.
+    def scm = [url: 'https://github.com/spoonia/grails-hibernate-hijacker']
+
+    def doWithWebDescriptor = { xml ->
+        // TODO Implement additions to web.xml (optional), this event occurs before
+    }
 
     def doWithSpring = {
-
         // Responsible for wrapping the real SessionFactory instance
         // inside a JDK proxy so we can intercept new sessions.
         sessionFactoryProxyFactory(SessionFactoryProxyFactory) {
@@ -71,5 +84,28 @@ This plugin publishes intercepted Session instances to a lightweight event broke
         // Provides a convenient way of updating entity data
         // before it's persisted to the database.
         hibernateEventPropertyUpdater(HibernateEventPropertyUpdater)
+    }
+
+    def doWithDynamicMethods = { ctx ->
+        // TODO Implement registering dynamic methods to classes (optional)
+    }
+
+    def doWithApplicationContext = { ctx ->
+        // TODO Implement post initialization spring config (optional)
+    }
+
+    def onChange = { event ->
+        // TODO Implement code that is executed when any artefact that this plugin is
+        // watching is modified and reloaded. The event contains: event.source,
+        // event.application, event.manager, event.ctx, and event.plugin.
+    }
+
+    def onConfigChange = { event ->
+        // TODO Implement code that is executed when the project configuration changes.
+        // The event is the same as for 'onChange'.
+    }
+
+    def onShutdown = { event ->
+        // TODO Implement code that is executed when the application shuts down (optional)
     }
 }
