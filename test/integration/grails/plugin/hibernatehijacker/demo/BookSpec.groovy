@@ -1,13 +1,18 @@
 package grails.plugin.hibernatehijacker.demo
 
-import grails.plugin.spock.IntegrationSpec
 import grails.plugins.hawkeventing.Event
 import grails.plugins.hawkeventing.EventConsumer
+import grails.test.mixin.TestMixin
+import grails.test.mixin.integration.IntegrationTestMixin
+import grails.test.spock.IntegrationSpec
 
 /**
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
+@TestMixin(value = IntegrationTestMixin)
 class BookSpec extends IntegrationSpec {
+
+    static transactional = false
 
     def eventBroker
 

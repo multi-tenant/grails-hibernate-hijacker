@@ -1,28 +1,29 @@
 package grails.plugin.hibernatehijacker.hibernate;
 
+import grails.plugin.hibernatehijacker.HibernateFilterDomainConfiguration;
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean;
+import org.codehaus.groovy.grails.orm.hibernate.GrailsSessionContext;
 import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners;
-import org.hibernate.HibernateException;
+import org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsAnnotationConfiguration;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.context.CurrentSessionContext;
+import org.hibernate.context.spi.CurrentSessionContext;
+import org.hibernate.event.spi.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate3.SpringSessionContext;
+import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * The SessionFactory is still built the usual way, but instead of returning the
  * actual instance we're creating and returning a proxy.
- * 
+ * <p>
  * Other features like event listeners can be enabled by injecting
  * HibernateConfigurationPostProcessor beans.
- * 
+ *
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
 public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBean {
@@ -30,58 +31,52 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
     private static final Logger log = LoggerFactory.getLogger(WrappedSessionFactoryBean.class);
 
     private SessionFactoryProxyFactory sessionFactoryProxyFactory;
-    private List<HibernateConfigPostProcessor> hibernateConfigPostProcessors = new ArrayList<HibernateConfigPostProcessor>();
     private Map<String, Object> listenerMap;
 
     /**
      * If no plugins has specified another CurrentSessionContextClass
      * (like the webflow plugin) we'll use SpringSessionContext.
      */
-    private Class<? extends CurrentSessionContext> currentSessionContextClass = SpringSessionContext.class;
+    private Class<? extends CurrentSessionContext> currentSessionContextClass = GrailsSessionContext.class;
 
     /**
-     * this is used for Grails 2.x / Springframework 3.1.x
-     * @param sessionFactory
-     * @return
+     * @return Proxied session factory
      */
     @Override
-    public SessionFactory wrapSessionFactoryIfNecessary(SessionFactory sessionFactory) {
-        sessionFactory = super.wrapSessionFactoryIfNecessary(sessionFactory);
+    protected GrailsAnnotationConfiguration newConfiguration() throws Exception {
+        super.configClass = HibernateFilterDomainConfiguration.class;
+        return super.newConfiguration();
+    }
+
+    protected void buildSessionFactoryProxy() {
         try {
-            return sessionFactoryProxyFactory.createSessionFactoryProxy(sessionFactory, currentSessionContextClass);
+            SessionFactory factoryProxy = sessionFactoryProxyFactory.createSessionFactoryProxy(getObject(), currentSessionContextClass);
+            Field field = ConfigurableLocalSessionFactoryBean.class.getDeclaredField("sessionFactory");
+            ReflectionUtils.makeAccessible(field);
+            field.set(this, factoryProxy);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
-    /**
-     * get called for Grails 1.3.x / Springframework 3.0.x
-     * @return
-     * @throws Exception
-     */
     @Override
-    public SessionFactory buildSessionFactory() throws Exception {
-        setExposeTransactionAwareSessionFactory(false);
-        SessionFactory realSessionFactory = super.buildSessionFactory();
-        return sessionFactoryProxyFactory.createSessionFactoryProxy(realSessionFactory, currentSessionContextClass);
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        doSessionFactoryPostProcessing(getObject());
     }
 
-    @Override
-    protected void postProcessConfiguration(Configuration config) throws HibernateException {
-        for (HibernateConfigPostProcessor processor : hibernateConfigPostProcessors) {
-            log.debug("Passing Hibernate configuration to: {}", processor.getClass().getSimpleName());
-            processor.doPostProcessing(config);
+    private void doSessionFactoryPostProcessing(SessionFactory factory) {
+        Collection<HibernateSessionFactoryPostProcessor> processors = applicationContext.getBeansOfType(HibernateSessionFactoryPostProcessor.class).values();
+        for (HibernateSessionFactoryPostProcessor processor : processors) {
+            log.debug("Passing Hibernate configuration and Session Factory to: {}", processor.getClass().getSimpleName());
+            processor.doPostProcessing(factory);
         }
-
-        super.postProcessConfiguration(config);
-        addListenersFromMap(config);
+        addListenersFromMap(factory);
     }
 
     /**
      * Important: Do not call super!
-     * 
-     * @see http://jira.codehaus.org/browse/GRAILS-7211
-     * @see http://jira.codehaus.org/browse/GRAILS-5725
+     *
      * @param listeners
      */
     @Override
@@ -91,19 +86,24 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
         }
     }
 
-    private void addListenersFromMap(Configuration configuration) {
+    private void addListenersFromMap(SessionFactory factory) {
         if (this.listenerMap != null) {
             for (String type : this.listenerMap.keySet()) {
                 Object listener = listenerMap.get(type);
-                HibernateEventUtil.addListener(configuration, type, listener);
+                HibernateEventUtil.addListener(factory, EventType.resolveEventTypeByName(type), listener);
             }
         }
+    }
+
+    @Override
+    public void setConfigClass(Class<?> configClass) {
+        super.setConfigClass(configClass);
     }
 
     /**
      * Make sure not to pass the argument to ConfigurableLocalSessionFactoryBean.
      * We don't want Hibernate to make an instance of the CurrentSessionContext.
-     * 
+     * <p>
      * By listening in on this we're able to support plugins like webflow
      * without introducing a compile time dependency.
      */
@@ -116,9 +116,4 @@ public class WrappedSessionFactoryBean extends ConfigurableLocalSessionFactoryBe
     public void setSessionFactoryProxyFactory(SessionFactoryProxyFactory sessionFactoryProxyFactory) {
         this.sessionFactoryProxyFactory = sessionFactoryProxyFactory;
     }
-
-    public void setHibernateConfigPostProcessors(List<HibernateConfigPostProcessor> configPostProcessors) {
-        this.hibernateConfigPostProcessors = configPostProcessors;
-    }
-
 }

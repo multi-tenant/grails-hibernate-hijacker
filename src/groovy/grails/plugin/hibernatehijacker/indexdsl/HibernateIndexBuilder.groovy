@@ -1,7 +1,6 @@
 package grails.plugin.hibernatehijacker.indexdsl
 
 import grails.plugin.hibernatehijacker.exception.HibernateHijackerException
-
 import org.hibernate.mapping.Column
 import org.hibernate.mapping.Index
 import org.hibernate.mapping.Table
@@ -13,11 +12,9 @@ import org.slf4j.LoggerFactory
  * Just add a closure like the one below to your domain
  * classes and you're ready to go!
  *
- * static indexes = {
- *      index_name 'first_column', 'second_column', '...'
+ * static indexes = {*      index_name 'first_column', 'second_column', '...'
  *      second_index '...'
- * }
- *
+ *}*
  * Important! The column are identified by the database and
  * not property name. Camel cased property names will be translated
  * to a underscore based convention.

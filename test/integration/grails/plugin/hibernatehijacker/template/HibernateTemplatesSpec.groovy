@@ -1,17 +1,20 @@
 package grails.plugin.hibernatehijacker.template
 
 import grails.plugin.hibernatehijacker.demo.Book
-import grails.plugin.spock.IntegrationSpec
-
-import org.hibernate.SessionFactory
+import grails.test.mixin.TestMixin
+import grails.test.mixin.integration.IntegrationTestMixin
+import grails.test.spock.IntegrationSpec
 
 /**
  * @author Kim A. Betti
  */
+@TestMixin(value = IntegrationTestMixin)
 class HibernateTemplatesSpec extends IntegrationSpec {
 
-    HibernateTemplates hibernateTemplates
-    SessionFactory sessionFactory
+    static transactional = false
+
+    def sessionFactory
+    def hibernateTemplates
 
     def "throwing a runtime exception rolls back the transaction"() {
         given:
@@ -19,7 +22,7 @@ class HibernateTemplatesSpec extends IntegrationSpec {
         book.save flush: true, failOnError: true
 
         when:
-        hibernateTempaltes.withTransaction {
+        hibernateTemplates.withTransaction {
             book.name = "Groovy in action 2"
             book.save flush: true, failOnError: true
 
@@ -41,7 +44,7 @@ class HibernateTemplatesSpec extends IntegrationSpec {
         book.save flush: true, failOnError: true
 
         when:
-        hibernateTempaltes.withTransaction {
+        hibernateTemplates.withTransaction {
             book.name = "Grails in action 2"
             book.save flush: true, failOnError: true
 

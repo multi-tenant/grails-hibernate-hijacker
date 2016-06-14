@@ -1,18 +1,18 @@
 package grails.plugin.hibernatehijacker.hibernate.events;
 
 import grails.plugin.hibernatehijacker.exception.HibernateHijackerException;
+import org.hibernate.event.spi.PreInsertEvent;
+import org.hibernate.tuple.NonIdentifierAttribute;
+import org.hibernate.tuple.entity.EntityMetamodel;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.hibernate.event.PreInsertEvent;
-import org.hibernate.tuple.StandardProperty;
-import org.hibernate.tuple.entity.EntityMetamodel;
-
 /**
  * Provides a convenient way of updating entity data before it's persisted to the database.
+ *
  * @author Kim A. Betti
  */
 public class HibernateEventPropertyUpdater {
@@ -25,7 +25,7 @@ public class HibernateEventPropertyUpdater {
         updateState(event.getState(), propertyIndex, newValue);
     }
 
-    protected Integer getPropertyIndexFromCache(PreInsertEvent event, String propertyName) {
+    private Integer getPropertyIndexFromCache(PreInsertEvent event, String propertyName) {
         String entityClassName = event.getEntity().getClass().getCanonicalName();
         if (!entityIndexCache.containsKey(entityClassName)) {
             addEntityIndexesToCache(entityClassName, event);
@@ -35,18 +35,18 @@ public class HibernateEventPropertyUpdater {
         return entityPropertyIndexCache.getIndex(propertyName);
     }
 
-    protected synchronized void addEntityIndexesToCache(String entityClassName, PreInsertEvent event) {
+    private synchronized void addEntityIndexesToCache(String entityClassName, PreInsertEvent event) {
         EntityMetamodel metamodel = event.getPersister().getEntityMetamodel();
         Map<String, Integer> propertyIndexes = extractPropertyIndexMap(metamodel);
         EntityPropertyIndexCache propertyIndexCache = new EntityPropertyIndexCache(entityClassName, propertyIndexes);
         entityIndexCache.put(entityClassName, propertyIndexCache);
     }
 
-    protected Map<String, Integer> extractPropertyIndexMap(EntityMetamodel metaModel) {
+    private Map<String, Integer> extractPropertyIndexMap(EntityMetamodel metaModel) {
         int i = 0;
         Map<String, Integer> propertyIndexes = new HashMap<String, Integer>();
-        StandardProperty[] properties = metaModel.getProperties();
-        for (StandardProperty property : properties) {
+        NonIdentifierAttribute[] properties = metaModel.getProperties();
+        for (NonIdentifierAttribute property : properties) {
             String propertyName = property.getName();
             propertyIndexes.put(propertyName, i++);
         }
@@ -54,7 +54,7 @@ public class HibernateEventPropertyUpdater {
         return propertyIndexes;
     }
 
-    protected void updateState(Object[] state, int propertyIndex, Object newValue) {
+    private void updateState(Object[] state, int propertyIndex, Object newValue) {
         state[propertyIndex] = newValue;
     }
 
@@ -62,23 +62,24 @@ public class HibernateEventPropertyUpdater {
      * Contains the index of each property for a given
      * entity class. This allows us to look up the index
      * without browsing through a huge object graph.
+     *
      * @author Kim A. Betti
      */
-    protected class EntityPropertyIndexCache {
+    private class EntityPropertyIndexCache {
 
         private final String entityClassName;
         private final ConcurrentMap<String, Integer> propertyIndex = new ConcurrentHashMap<String, Integer>();
 
-        public EntityPropertyIndexCache(String entityClassName, Map<String, Integer> fieldIndexes) {
+        EntityPropertyIndexCache(String entityClassName, Map<String, Integer> fieldIndexes) {
             this.entityClassName = entityClassName;
             propertyIndex.putAll(fieldIndexes);
         }
 
-        public boolean containsIndex(String propertyName) {
+        boolean containsIndex(String propertyName) {
             return propertyIndex.containsKey(propertyName);
         }
 
-        public Integer getIndex(String propertyName) {
+        Integer getIndex(String propertyName) {
             if (propertyIndex.containsKey(propertyName)) {
                 return propertyIndex.get(propertyName);
             }
