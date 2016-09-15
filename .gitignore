@@ -18,3 +18,4 @@ stacktrace.log
 *.sha1
 *.iml
 *.ipr
+.nb-gradle
