@@ -2,6 +2,7 @@ package grails.plugin.hibernatehijacker.template
 
 import org.hibernate.Session
 import org.hibernate.SessionFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.orm.hibernate3.HibernateCallback
 import org.springframework.orm.hibernate3.HibernateTemplate
 import org.springframework.orm.hibernate3.SessionHolder
@@ -21,7 +22,9 @@ import org.springframework.transaction.support.TransactionTemplate
  */
 class HibernateTemplates {
 
+    @Autowired
     PlatformTransactionManager transactionManager
+    @Autowired
     SessionFactory sessionFactory
 
     def withTransaction(Closure callback) {

@@ -1,7 +1,6 @@
 package grails.plugin.hibernatehijacker.indexdsl;
 
 import grails.plugin.hibernatehijacker.hibernate.HibernateConfigPostProcessor;
-import grails.plugin.hibernatehijacker.indexdsl.HibernateIndexBuilder;
 import groovy.lang.Closure;
 
 import java.util.Iterator;

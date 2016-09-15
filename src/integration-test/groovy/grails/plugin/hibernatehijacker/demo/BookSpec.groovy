@@ -1,14 +1,20 @@
 package grails.plugin.hibernatehijacker.demo
 
 
+import geb.spock.GebSpec
 import grails.plugins.hawkeventing.Event
 import grails.plugins.hawkeventing.EventConsumer
+import grails.test.mixin.integration.Integration
+import org.springframework.test.annotation.Rollback
+
 import spock.lang.Specification
 
 /**
  * @author Kim A. Betti <kim.betti@gmail.com>
  */
-class BookSpec extends Specification {
+@Integration
+@Rollback
+class BookSpec extends GebSpec{
 
     def eventBroker
 

@@ -8,6 +8,14 @@ import grails.plugins.hawkeventing.*
 import org.hibernate.Session
 import grails.util.Holders
 
+import grails.test.mixin.integration.Integration
+import grails.transaction.*
+
+import spock.lang.*
+import geb.spock.*
+
+@Integration
+@Rollback
 class BookFunctionalSpec extends GebSpec {
 
     String baseUrl = "http://localhost:8080"

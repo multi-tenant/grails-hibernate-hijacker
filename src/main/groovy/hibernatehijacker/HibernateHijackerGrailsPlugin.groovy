@@ -1,6 +1,11 @@
 package hibernatehijacker
-
+import grails.plugin.hibernatehijacker.hibernate.SessionFactoryProxyFactory
 import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventListener
+import grails.plugin.hibernatehijacker.hibernate.HibernateEventSubscriptionFactory
+import grails.plugin.hibernatehijacker.indexdsl.IndexDslPostProcessor
+import grails.plugin.hibernatehijacker.spring.SessionFactoryPostProcessor
+import grails.plugin.hibernatehijacker.template.HibernateTemplates
+import grails.plugin.hibernatehijacker.hibernate.events.HibernateEventPropertyUpdater
 import grails.plugins.*
 
 class HibernateHijackerGrailsPlugin extends Plugin {
@@ -53,6 +58,7 @@ def license = "APACHE"
             // Responsible for wrapping the real SessionFactory instance
         // inside a JDK proxy so we can intercept new sessions.
         sessionFactoryProxyFactory(SessionFactoryProxyFactory) {
+            
             eventBroker = ref("eventBroker")
         }
 
@@ -74,8 +80,8 @@ def license = "APACHE"
 
         // Implements withTransaction and withNewSession
         hibernateTemplates(HibernateTemplates) {
-            transactionManager = ref("transactionManager")
-            sessionFactory = ref("sessionFactory")
+//            transactionManager = ref("transactionManager")
+//            sessionFactory = ref("sessionFactory")
         }
 
         // Provides a convenient way of updating entity data

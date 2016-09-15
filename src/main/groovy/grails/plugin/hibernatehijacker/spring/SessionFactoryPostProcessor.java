@@ -24,6 +24,7 @@ public class SessionFactoryPostProcessor implements BeanFactoryPostProcessor, Or
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        System.out.println("got bean factory "+beanFactory);
         BeanDefinition beanDef = beanFactory.getBeanDefinition("sessionFactory");
         beanDef.setBeanClassName(WrappedSessionFactoryBean.class.getName());
         setBeanProperties(beanFactory, beanDef);

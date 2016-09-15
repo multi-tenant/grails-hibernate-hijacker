@@ -5,10 +5,12 @@ import org.hibernate.event.PostUpdateEvent
 import org.hibernate.event.PostUpdateEventListener
 import org.hibernate.event.PreUpdateEvent
 import org.hibernate.event.PreUpdateEventListener
-import spock.lang.Specification
 
 import org.hibernate.cfg.Configuration
 
+import spock.lang.Specification
+import grails.test.mixin.TestFor
+import spock.lang.*
 
 /**
  * @author Kim A. Betti

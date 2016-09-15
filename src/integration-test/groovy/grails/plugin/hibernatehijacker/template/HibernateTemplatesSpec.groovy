@@ -1,14 +1,19 @@
 package grails.plugin.hibernatehijacker.template
 
+import geb.spock.GebSpec
 import grails.plugin.hibernatehijacker.demo.Book
+import grails.test.mixin.integration.Integration
 
 import org.hibernate.SessionFactory
+import org.springframework.test.annotation.Rollback
 import spock.lang.Specification
 
 /**
  * @author Kim A. Betti
  */
-class HibernateTemplatesSpec extends Specification {
+@Integration
+@Rollback
+class HibernateTemplatesSpec extends GebSpec {
 
     HibernateTemplates hibernateTemplates
     SessionFactory sessionFactory
