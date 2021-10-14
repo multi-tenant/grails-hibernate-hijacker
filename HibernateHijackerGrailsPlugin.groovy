@@ -14,7 +14,7 @@ import static org.codehaus.groovy.grails.commons.GrailsDomainClassProperty.DEFAU
 
 class HibernateHijackerGrailsPlugin {
 
-    def version = "0.8.2"
+    def version = "0.9.0-SNAPSHOT"
 
     def grailsVersion = "1.3.5 > *"
 
