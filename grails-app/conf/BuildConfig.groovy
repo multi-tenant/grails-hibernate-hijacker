@@ -10,7 +10,8 @@ grails.project.dependency.resolution = {
 	log 'warn'
 
 	repositories {
-		grailsCentral()
+		mavenRepo 'https://repo1.maven.org/maven2/'
+		mavenRepo 'https://grails.jfrog.io/grails/plugins'
 	}
 
 	dependencies {
@@ -29,7 +30,7 @@ grails.project.dependency.resolution = {
 			export = false
 		}
 
-		compile ":hibernate:$grailsVersion", {
+		compile ":hibernate:3.6.10.16", {
 			export = false
 		}
 
